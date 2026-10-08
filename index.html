@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CertiChain AI — Original or Fake, in one answer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f3f5f8;--panel:#fff;--ink:#12233d;--mut:#52606f;--line:#dce2ea;--acc:#12233d;--onacc:#fff;--soft:#e8edf4;--gold:#94701f;--foil:#c9a24a;--ok:#17704a;--warn:#8a5a00;--bad:#b3261e;--badbg:#fbe7e5;--okbg:#e0f2e8;--warnbg:#f8ecd0;--serif:Newsreader,Georgia,'Times New Roman',serif;--sans:'Public Sans',system-ui,-apple-system,'Segoe UI',sans-serif;--mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;--r:8px;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0a1424;--panel:#111f33;--ink:#e8edf4;--mut:#9fb0c4;--line:#22344c;--acc:#e0b95a;--onacc:#1a1405;--soft:#172940;--gold:#e0b95a;--foil:#e0b95a;--ok:#6fe0a2;--warn:#f0b64a;--bad:#ff8c82;--badbg:#3a1a1a;--okbg:#0f3322;--warnbg:#3a2c0e}}
+:root[data-theme="dark"]{--bg:#0a1424;--panel:#111f33;--ink:#e8edf4;--mut:#9fb0c4;--line:#22344c;--acc:#e0b95a;--onacc:#1a1405;--soft:#172940;--gold:#e0b95a;--foil:#e0b95a;--ok:#6fe0a2;--warn:#f0b64a;--bad:#ff8c82;--badbg:#3a1a1a;--okbg:#0f3322;--warnbg:#3a2c0e}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 var(--sans);-webkit-font-smoothing:antialiased}
+h1,h2{font-family:var(--serif);font-weight:500;letter-spacing:-.012em;line-height:1.1;margin:0}
+h3,h4{font-family:var(--sans);margin:0;line-height:1.3}
+h3{font-size:18px;font-weight:700}h4{font-size:15px;font-weight:700}
+p{margin:0 0 12px}
+.mono{font-family:var(--mono);font-size:12px;word-break:break-all}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--foil);outline-offset:2px}
+.ct{max-width:1160px;margin:auto;padding:0 24px}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:var(--panel);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;gap:20px;padding-block:10px}
+.logo{display:flex;align-items:center;gap:10px;font:700 20px var(--sans);letter-spacing:-.01em;color:var(--ink);margin-right:auto}
+.aitag{background:var(--ink);color:var(--panel);padding:1px 7px;border-radius:4px;font-size:.7em;vertical-align:2px}
+nav{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+nav button{background:none;border:0;color:var(--mut);padding:14px 14px;font-weight:600;font-size:15px;white-space:nowrap;border-radius:0}
+nav button:hover{color:var(--ink)}
+nav button[aria-current=page]{color:var(--ink);box-shadow:inset 0 -3px 0 var(--foil)}
+.notice{display:none;background:var(--warnbg);color:var(--warn);padding:10px 24px;text-align:center;font-weight:600;font-size:14px;border-bottom:1px solid var(--line)}
+main{max-width:1160px;margin:auto;padding:40px 24px 80px}
+body.is-home main{display:none}
+.view{display:none}.view.on{display:block}
+.view>h2{font-size:clamp(30px,3.6vw,42px)}
+.sub{color:var(--mut);margin:10px 0 26px}
+.btn{background:var(--acc);color:var(--onacc);border:0;padding:12px 22px;border-radius:6px;font-weight:600;transition:filter .15s}
+.btn:hover{filter:brightness(1.15)}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.btn.ghost:hover{border-color:var(--ink);filter:none}
+.btn.sm{padding:8px 14px;font-size:14px}
+.btn.gold{background:linear-gradient(180deg,#e6c778,#c9a24a);color:#1a1405}
+.btn.outline{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.4)}
+.btn.outline:hover{border-color:#fff;filter:none}
+.btn:disabled{opacity:.6;cursor:default}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:22px}
+.grid{display:grid;gap:16px}.g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}.g3{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}.g4{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+label{display:block;font-weight:600;font-size:14px;margin-bottom:5px}
+input,select,textarea{width:100%;padding:11px 13px;border:1.5px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);font:inherit}
+input:focus,textarea:focus,select:focus{border-color:var(--ink);outline:none}
+textarea{font:12px/1.5 var(--mono);resize:vertical}
+.drop{border:1.5px dashed var(--line);border-radius:var(--r);padding:16px;background:var(--bg);color:var(--mut)}
+.pill{display:inline-block;padding:3px 11px;border-radius:99px;font-weight:700;font-size:13px}
+.p-ok{background:var(--okbg);color:var(--ok)}.p-bad{background:var(--badbg);color:var(--bad)}.p-warn{background:var(--warnbg);color:var(--warn)}
+.steps{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+.steps li{display:flex;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:6px;background:var(--bg);animation:in .3s both}
+@keyframes in{from{opacity:0;transform:translateY(5px)}}
+.meter{height:8px;background:var(--soft);border-radius:4px;overflow:hidden;margin-top:4px}.meter i{display:block;height:100%}
+.wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:11px 10px;border-bottom:1px solid var(--line)}
+th{color:var(--mut);font-weight:700;font-size:12px;letter-spacing:.04em}
+.stat b{font:500 36px/1.1 var(--serif);display:block}.stat span{color:var(--mut);font-size:14px}
+.chart{display:flex;gap:10px;align-items:flex-end;height:140px}.chart div{flex:1;background:var(--acc);border-radius:3px 3px 0 0;position:relative;min-height:3px}.chart span{position:absolute;bottom:-22px;left:0;right:0;text-align:center;font-size:12px;color:var(--mut)}
+.qr{background:#fff;padding:5px;display:inline-block;line-height:0;border:1px solid var(--line);border-radius:4px}
+.chk{display:flex;gap:8px;align-items:center;margin:6px 0;font-weight:500}.chk input{width:auto}
+.star{background:none;border:0;font-size:30px;line-height:1;color:var(--line);padding:2px}.star.on{color:var(--foil)}.star:disabled{cursor:default}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--panel);padding:11px 18px;border-radius:6px;display:none;z-index:99;font-weight:600}
+.num{width:36px;height:36px;border-radius:50%;background:var(--ink);color:var(--panel);display:grid;place-items:center;font:700 15px var(--sans);position:relative;z-index:1}
+ul.plain{padding-left:18px;margin:8px 0 14px}
+
+/* home */
+.heroband{background:#0c1a2e;color:#fff;position:relative;overflow:hidden}
+.heroband:before,.ctaband:before{content:"";position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='48'%3E%3Cg fill='none' stroke='%23c9a24a' stroke-opacity='.17'%3E%3Cpath d='M0 12Q40-6 80 12T160 12'/%3E%3Cpath d='M0 24Q40 6 80 24T160 24'/%3E%3Cpath d='M0 36Q40 18 80 36T160 36'/%3E%3C/g%3E%3C/svg%3E");-webkit-mask-image:linear-gradient(90deg,transparent 10%,#000 80%);mask-image:linear-gradient(90deg,transparent 10%,#000 80%)}
+.hero{position:relative;display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center;padding-block:76px 84px}
+.hero h1{font-size:clamp(40px,5.6vw,68px);max-width:15ch}
+.hero .lead{font-size:19px;color:rgba(255,255,255,.78);max-width:52ch;margin:22px 0 30px}
+.proof{list-style:none;padding:0;margin:34px 0 0;display:grid;gap:10px;color:rgba(255,255,255,.82);font-size:15px}
+.proof li{display:flex;gap:10px;align-items:flex-start}.proof svg{flex:none;width:20px;height:20px;margin-top:2px;stroke:var(--foil);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.stage{position:relative}
+.cert{position:relative;background:#fff;color:#12233d;border-radius:4px;padding:32px 30px 28px;box-shadow:0 30px 70px rgba(0,0,0,.45);overflow:hidden;--ink:#12233d;--mut:#52606f;--line:#dce2ea;outline:1px solid #c9a24a;outline-offset:-10px}
+.cert:after{content:"";position:absolute;top:0;bottom:0;left:0;width:110px;background:linear-gradient(90deg,transparent,rgba(201,162,74,.4),transparent);transform:translateX(-130px);animation:scan 1.4s .5s ease-in-out forwards;pointer-events:none}
+@keyframes scan{to{transform:translateX(640px)}}
+.cert-inst{font:500 17px var(--serif);color:#52606f}
+.cert-kind{font:600 12px var(--sans);color:#94701f;margin-top:2px}
+.cert-name{font:500 36px/1.1 var(--serif);margin:18px 0 4px}
+.cert-course{color:#52606f;margin-bottom:18px}
+.chk-list{list-style:none;padding:0;margin:0 0 20px;display:grid;gap:7px;font-size:14px;font-weight:600}
+.chk-list li{opacity:0;animation:fade .4s forwards;display:flex;gap:8px}
+.chk-list li:before{content:"\2713";color:#17704a;font-weight:800}
+.chk-list li:nth-child(1){animation-delay:.9s}.chk-list li:nth-child(2){animation-delay:1.25s}.chk-list li:nth-child(3){animation-delay:1.6s}
+@keyframes fade{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:none}}
+.cert-foot{display:flex;gap:16px;align-items:flex-end}.cert-foot .mono{color:#52606f;max-width:150px}
+.seal{position:absolute;right:26px;bottom:26px;width:96px;height:96px;border-radius:50%;border:2px solid #c9a24a;outline:1px solid #c9a24a;outline-offset:3px;color:#8a6a1f;display:grid;place-items:center;text-align:center;font:700 12px/1.25 var(--sans);letter-spacing:.08em;background:#fff;opacity:0;animation:stamp .55s 2.1s cubic-bezier(.2,1.5,.4,1) forwards}
+@keyframes stamp{from{transform:scale(2.2) rotate(-35deg);opacity:0}to{transform:scale(1) rotate(-12deg);opacity:1}}
+.cap{color:rgba(255,255,255,.55);font-size:13px;margin:12px 0 0}
+.statsband{background:var(--panel);border-bottom:1px solid var(--line)}
+.statsband .ct{display:grid;grid-template-columns:repeat(4,1fr)}
+.statsband .stat{padding:26px 24px;border-left:1px solid var(--line)}.statsband .stat:first-child{border-left:0;padding-left:0}
+.sect{padding:88px 0}.sect.alt{background:var(--panel);border-block:1px solid var(--line)}
+.sect h2{font-size:clamp(30px,3.8vw,46px);max-width:19ch}
+.sect .sub{font-size:18px;max-width:56ch;margin:16px 0 44px}
+.cols3{display:grid;grid-template-columns:repeat(3,1fr)}
+.cols3>div{padding:0 32px;border-left:1px solid var(--line)}.cols3>div:first-child{border-left:0;padding-left:0}
+.cols3 h3{margin-bottom:8px}
+.tl{display:grid;grid-template-columns:repeat(4,1fr);gap:28px;position:relative}
+.tl:before{content:"";position:absolute;top:18px;left:18px;right:18px;height:2px;background:var(--line)}
+.tl>div{position:relative}.tl h3{margin:16px 0 6px}.tl p{color:var(--mut);font-size:15px}
+.bento{display:grid;grid-template-columns:repeat(6,1fr);gap:16px}
+.bento .card{padding:28px}.bento .card p{color:var(--mut);margin-bottom:14px}
+.s4{grid-column:span 4}.s3{grid-column:span 3}.s2{grid-column:span 2}
+.ic{width:28px;height:28px;stroke:var(--gold);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;margin-bottom:14px;display:block}
+.kv{margin:12px 0 14px}.kv>div{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.kv dt{color:var(--mut)}.kv dd{margin:0;font-weight:600}
+.redact{display:inline-block;width:120px;height:1.05em;background:var(--ink);border-radius:2px;vertical-align:-3px}
+.card.gold{border-color:var(--foil);box-shadow:inset 0 3px 0 var(--foil)}
+.scale{display:flex;height:14px;border-radius:7px;overflow:hidden;gap:2px;margin:6px 0 22px}.scale i{display:block}
+.scalelbl{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;font-size:14px}.scalelbl b{display:block;margin-bottom:2px}.scalelbl span{color:var(--mut)}
+.faq{max-width:780px}
+.faq details{border-bottom:1px solid var(--line);padding:18px 0}
+.faq summary{cursor:pointer;font-weight:700;list-style:none;display:flex;justify-content:space-between;gap:16px;font-size:17px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary:after{content:"+";font-size:24px;line-height:1;color:var(--gold)}.faq details[open] summary:after{content:"\2013"}
+.faq p{margin:12px 0 0;color:var(--mut)}
+.ctaband{position:relative;background:#0c1a2e;color:#fff;overflow:hidden;padding:76px 0;text-align:center}
+.ctaband .ct{position:relative}.ctaband h2{font-size:clamp(30px,4vw,48px);margin:0 auto 14px;max-width:18ch}.ctaband p{color:rgba(255,255,255,.75);max-width:48ch;margin:0 auto 28px;font-size:18px}
+footer{background:#08121f;color:#aebdce;padding:56px 0 28px;font-size:15px}
+.fgrid{display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:40px}
+footer .logo{color:#fff;margin:0 0 12px}footer .aitag{background:#fff;color:#08121f}
+footer h4{color:#fff;margin-bottom:12px}
+.flink{display:block;background:none;border:0;color:inherit;padding:4px 0;text-align:left}.flink:hover{color:#fff}
+footer span.fl{display:block;padding:4px 0}
+.fbase{border-top:1px solid #1b2b40;margin-top:36px;padding-top:20px;font-size:13px;color:#7f92a8}
+@media(max-width:900px){.hero{grid-template-columns:1fr;padding-block:48px 56px;gap:40px}.bento{grid-template-columns:1fr}.bento>*{grid-column:auto!important}.tl{grid-template-columns:1fr;gap:20px}.tl:before{display:none}.cols3{grid-template-columns:1fr;gap:22px}.cols3>div{border-left:0;border-top:1px solid var(--line);padding:22px 0 0}.cols3>div:first-child{border-top:0;padding-top:0}.statsband .ct{grid-template-columns:repeat(2,1fr)}.statsband .stat:nth-child(3){border-left:0;padding-left:0}.scalelbl{grid-template-columns:1fr 1fr}.fgrid{grid-template-columns:1fr}.sect{padding:60px 0}}
+@media(max-width:700px){.bar{flex-wrap:wrap;gap:0}nav{order:3;width:100%}.hcta{display:none}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}.chk-list li,.seal{opacity:1!important}.seal{transform:rotate(-12deg)}.cert:after{display:none}}
+.bar{gap:12px}
+.iconbtn{background:none;border:1.5px solid var(--line);border-radius:8px;width:42px;height:42px;display:grid;place-items:center;color:var(--ink);padding:0}
+.iconbtn svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
+.iconbtn:hover{border-color:var(--ink)}
+.profile{display:flex;align-items:center;gap:10px;background:none;border:0;padding:4px 10px 4px 4px;border-radius:99px;color:var(--ink)}
+.profile:hover{background:var(--soft)}
+.avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;background:var(--soft);border:2px solid var(--foil);flex:none}
+.avatar.big{width:54px;height:54px}
+.pname{font-weight:700;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hlogo{background:none;border:0;padding:0;margin-left:auto;margin-right:0;cursor:pointer}
+.scrim{position:fixed;inset:0;background:rgba(6,16,30,.55);opacity:0;visibility:hidden;transition:opacity .2s;z-index:40}
+.drawer{position:fixed;top:0;bottom:0;left:0;width:min(330px,86vw);background:var(--panel);z-index:50;transform:translateX(-102%);transition:transform .22s ease;display:flex;flex-direction:column;border-right:1px solid var(--line);padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);visibility:hidden}
+body.menu-open .scrim{opacity:1;visibility:visible}
+body.menu-open .drawer{transform:none;visibility:visible}
+.dhead{display:flex;gap:14px;align-items:center;padding:24px 20px;border-bottom:1px solid var(--line)}
+.dhead b{display:block;font-size:17px;margin-bottom:4px;word-break:break-word}
+.dmenu{padding:10px;display:flex;flex-direction:column;flex:1;overflow-y:auto}
+.dmenu button{display:flex;align-items:center;gap:12px;background:none;border:0;color:var(--ink);padding:13px 12px;border-radius:8px;font-weight:600;font-size:16px;text-align:left;width:100%}
+.dmenu button svg{width:20px;height:20px;stroke:var(--gold);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.dmenu button:hover{background:var(--soft)}
+.dmenu button[aria-current=page]{background:var(--soft);box-shadow:inset 3px 0 0 var(--foil)}
+.dsep{height:1px;background:var(--line);margin:8px 6px}
+.dmenu .so{margin-top:auto;color:var(--bad)}.dmenu .so svg{stroke:var(--bad)}
+body.signed-out #menuBtn,body.signed-out #profileBtn{display:none}
+.dash-hero h1{font-size:clamp(32px,4.6vw,54px);margin-bottom:4px}
+.actions{margin:22px 0}
+.action{padding:30px;display:flex;flex-direction:column;gap:8px;min-height:250px}
+.action h2{font-size:32px}
+.action p{color:var(--mut);max-width:44ch;flex:1;margin:0}
+.action .ic{width:36px;height:36px;margin-bottom:6px}
+.action .note{font-size:14px;color:var(--mut);margin-left:8px}
+.dstats .card{padding:18px}
+.sect-in{margin-top:64px;scroll-margin-top:90px}
+.sect-in h2{font-size:clamp(28px,3.6vw,42px);margin-bottom:8px}
+.sect-in>.sub{max-width:60ch;font-size:17px;margin:10px 0 32px}
+.signed{max-width:520px;margin:60px auto;text-align:center;padding:36px}
+.btn:disabled{cursor:not-allowed}
+@media(max-width:560px){.pname{max-width:110px}.hlogo .aitag{display:none}}
+@media(prefers-reduced-motion:reduce){.drawer,.scrim{transition:none}}
+
+/* ---------- auth pages ---------- */
+body.auth-mode header .hlogo{margin-right:auto;margin-left:0}
+.authwrap{display:grid;grid-template-columns:1fr 1fr;max-width:980px;margin:24px auto 0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--panel)}
+.authside{background:#0c1a2e;color:#fff;padding:44px 38px;display:flex;flex-direction:column;gap:18px;justify-content:center;position:relative}
+.authside h2{font-size:clamp(28px,3vw,38px);color:#fff}
+.authside p{color:rgba(255,255,255,.75);margin:0}
+.authside ul{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:12px}
+.authside li{display:flex;gap:10px;align-items:flex-start;color:rgba(255,255,255,.9);font-size:15px}
+.authside li svg{width:20px;height:20px;stroke:var(--foil);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none;margin-top:2px}
+.authform{padding:44px 38px}
+.authform h1{font-size:34px;margin-bottom:6px}
+.authform .sub{margin:0 0 24px}
+.fld{margin-bottom:16px}
+.pwbox{position:relative}
+.pwbox input{padding-right:64px}
+.pwtoggle{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:0;color:var(--mut);font-weight:600;font-size:13px;padding:6px 8px;border-radius:6px}
+.pwtoggle:hover{color:var(--ink)}
+.autherr{display:none;background:var(--badbg);color:var(--bad);padding:10px 12px;border-radius:6px;font-size:14px;font-weight:600;margin-bottom:16px}
+.autherr.on{display:block}
+.fhint{font-size:13px;color:var(--mut);margin-top:5px}
+.fhint.bad{color:var(--bad)}
+.chk{display:flex;gap:8px;align-items:center;font-weight:500;margin:0}
+.chk input{width:auto;accent-color:var(--acc)}
+.authform .btn{width:100%;padding:13px 22px;font-size:16px}
+.authswitch{margin:20px 0 0;text-align:center;color:var(--mut);font-size:15px}
+.linkbtn{background:none;border:0;padding:0;color:var(--ink);font-weight:700;text-decoration:underline;text-underline-offset:3px}
+.sbar{display:flex;gap:4px;margin-top:8px}.sbar i{flex:1;height:5px;border-radius:3px;background:var(--soft);transition:background .2s}
+@media(max-width:800px){.authwrap{grid-template-columns:1fr}.authside{padding:28px 24px}.authform{padding:30px 24px}}
+
+.p-info{background:var(--soft);color:var(--ink)}
+.vd{display:flex;align-items:center;gap:16px;padding:22px 24px;border-radius:10px;margin-bottom:14px}
+.vd.ok{background:var(--okbg);color:var(--ok)}.vd.bad{background:var(--badbg);color:var(--bad)}.vd.unk{background:var(--warnbg);color:var(--warn)}
+.vd-ic{width:56px;height:56px;border-radius:50%;border:3px solid currentColor;display:grid;place-items:center;font:700 30px/1 var(--sans);flex:none}
+.vd-w{font:600 clamp(30px,5vw,44px)/1 var(--serif);text-transform:uppercase;letter-spacing:.04em}
+.vd-why{font-size:17px;margin:0 0 8px}
+.drop.big{padding:26px 16px;text-align:center;border-width:2px}
+details.opt summary{cursor:pointer;font-weight:600;color:var(--mut)}
+</style>
+</head>
+<body>
+<header><div class="ct bar">
+<button class="iconbtn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="drawer"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+<button class="profile" id="profileBtn" aria-label="Open profile menu"><img class="avatar" id="avatar" alt="" width="36" height="36" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%2312233d'/%3E%3Ccircle cx='20' cy='15' r='7' fill='%23c9a24a'/%3E%3Cpath d='M6 36c2-8 8-11 14-11s12 3 14 11z' fill='%23c9a24a'/%3E%3C/svg%3E"><span class="pname" id="pname">Guest</span></button>
+<button class="logo hlogo" data-go="dashboard" aria-label="CertiChain AI, go to dashboard"><svg width="38" height="38" viewBox="0 0 40 40" aria-hidden="true"><path d="M20 3l14 5v10c0 9-6 16-14 19C12 34 6 27 6 18V8z" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/><path d="M13 20.5l4.5 4.5L28 14" fill="none" stroke="var(--acc)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="20" cy="9.5" r="1.8" fill="var(--acc)"/><circle cx="11.5" cy="14" r="1.5" fill="var(--acc)"/><circle cx="28.5" cy="14" r="1.5" fill="var(--acc)"/></svg><span>CertiChain <span class="aitag">AI</span></span></button>
+</div></header>
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-label="Menu">
+<div class="dhead"><img class="avatar big" id="avatar2" alt="" width="54" height="54" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' fill='%2312233d'/%3E%3Ccircle cx='20' cy='15' r='7' fill='%23c9a24a'/%3E%3Cpath d='M6 36c2-8 8-11 14-11s12 3 14 11z' fill='%23c9a24a'/%3E%3C/svg%3E"><div><b id="pname2">Guest</b><span class="pill p-warn" id="prole">Verifier</span><div class="mono" id="acctid" style="display:none;margin-top:6px;color:var(--mut)"></div></div></div>
+<div class="dmenu">
+<button data-v="history"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 109-9 9 9 0 00-6.4 2.6L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/></svg>History</button>
+<button data-v="issuedcerts"><svg viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5M9 14l2 2 4-4"/></svg>Issued certificates</button>
+<button data-v="detected"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M12 8v5M12 16v.5"/></svg>Detected certificates</button>
+<div class="dsep"></div>
+<button data-scroll="how"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 114 2c-.9.6-1.5 1-1.5 2M12 17v.5"/></svg>How it works</button>
+<button data-scroll="about"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg>About</button>
+<div class="dsep"></div>
+<button id="signout" class="so"><svg viewBox="0 0 24 24"><path d="M9 4H6a2 2 0 00-2 2v12a2 2 0 002 2h3M16 8l4 4-4 4M20 12H9"/></svg>Sign out</button>
+</div>
+</aside>
+<div id="banner" class="notice">Sign in to claude.ai to use the shared ledger, wallet and dashboards.</div>
+<main>
+
+<section id="dashboard" class="view">
+<div class="dash-hero"><h1 id="greet">Welcome back</h1><p class="sub">What would you like to do?</p></div>
+<div class="grid g2 actions">
+<div class="card action" style="border-top:4px solid var(--foil)">
+<svg class="ic" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+<h2>Verify now</h2><p>Upload any certificate or document. You get one clear answer: Original or Fake. It does not need to be stored here first.</p>
+<div><button class="btn gold" data-go="verify">Verify now</button></div>
+</div>
+<div class="card action" style="border-top:4px solid var(--ink)">
+<svg class="ic" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5M12 11v6M9 14h6"/></svg>
+<h2>Issue certificate</h2><p>Register a new certificate on the ledger. A block is mined, its details are sealed and a verification code is created.</p>
+<div><button class="btn" id="issueBtn" data-go="issue">Issue certificate</button> <span class="note" id="issueNote"></span></div>
+</div>
+</div>
+<div class="grid g4 dstats" id="dstats"></div>
+<div class="card" style="margin-top:16px"><div class="row" style="justify-content:space-between;align-items:flex-start"><div><h3>History and backup</h3><p id="bkdash" style="margin:6px 0 0;color:var(--mut)"></p></div><div class="row"><button class="btn ghost sm" data-go="history">Open history</button><button class="btn sm" id="bkdl2">Download backup</button></div></div></div>
+
+<div class="sect-in" id="how">
+<h2>How it works</h2>
+<p class="sub">From issuing a certificate to a trusted result, in four steps.</p>
+<div class="tl">
+<div><div class="num">1</div><h3>Issue</h3><p>An editor registers the certificate. Its file fingerprint is recorded, its details are sealed with a verification code, and a new block is mined onto the ledger.</p></div>
+<div><div class="num">2</div><h3>Share</h3><p>The student imports a credential file into a private wallet. Each certificate gets a QR code that carries its ID and code, and privacy proofs reveal only chosen facts.</p></div>
+<div><div class="num">3</div><h3>Verify</h3><p>A verifier uploads any certificate or document. If it is on the ledger it is matched exactly. If it is not, AI and forensic checks judge it. The answer is simply Original or Fake.</p></div>
+<div><div class="num">4</div><h3>Trust</h3><p>One clear result appears: Original or Fake, with the reason. Every check and every issue is saved to history, and you can back it all up.</p></div>
+</div>
+<div class="cols3" style="margin-top:36px">
+<div><h3>Any certificate</h3><p style="color:var(--mut)">Upload any certificate image or PDF, even one that was never stored here. The AI examines it for edited text, pasted regions and fake seals.</p></div>
+<div><h3>Registered certificates</h3><p style="color:var(--mut)">If the file is the exact original issued on this site, it is confirmed against the ledger straight away. A revoked or altered one is called Fake.</p></div>
+<div><h3>Optional extras</h3><p style="color:var(--mut)">An ID, QR code or verification code adds an exact comparison with the sealed record, which catches edited names, grades and years.</p></div>
+</div>
+<h3 style="margin:36px 0 12px">What the result means</h3>
+<div class="grid g2">
+<div class="card" style="border-top:4px solid var(--ok)"><h3 style="color:var(--ok)">Original</h3><p style="color:var(--mut)">Matches the ledger, or no sign of editing or forgery was found. You can rely on it.</p></div>
+<div class="card" style="border-top:4px solid var(--bad)"><h3 style="color:var(--bad)">Fake</h3><p style="color:var(--mut)">Revoked, edited, not a real certificate, or the ID on it does not exist. Do not accept it.</p></div>
+</div>
+</div>
+
+<div class="sect-in" id="about">
+<h2>About CertiChain AI</h2>
+<p class="sub">CertiChain AI helps institutions issue tamper-evident certificates, and helps employers, universities and students check them in seconds.</p>
+<div class="grid g3">
+<div class="card"><svg class="ic" viewBox="0 0 24 24"><path d="M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1"/></svg><h3>Hash-linked ledger</h3><p style="color:var(--mut)">Every certificate sits in a mined block that holds the hash of the previous one. Change any record and every later block stops matching.</p></div>
+<div class="card"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg><h3>AI forgery detection</h3><p style="color:var(--mut)">Claude examines uploaded images, including zoomed corners, for edited text, pasted regions and fake seals. Pixel analysis and a metadata scan add advisory signals.</p></div>
+<div class="card"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 14h3M8 17h6"/></svg><h3>Details comparison</h3><p style="color:var(--mut)">With the verification code, the printed name, course, grade, year and institution are compared with the sealed record, even on screenshots and photos.</p></div>
+<div class="card"><svg class="ic" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg><h3>Privacy proofs</h3><p style="color:var(--mut)">Students share only the facts they choose, such as "degree completed". A salted Merkle proof is checked against the ledger and hidden fields stay hidden.</p></div>
+<div class="card"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM17 20h4M20 17v3"/></svg><h3>QR verification</h3><p style="color:var(--mut)">Each certificate carries a QR code with its ID and code, so a printed copy can be checked in seconds.</p></div>
+<div class="card"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.5 6.6 19.5l1.2-6L3.3 9.3l6.1-.7z"/></svg><h3>Clear verdict, history and backup</h3><p style="color:var(--mut)">Every result is a plain Original or Fake. Everything you verify or issue is saved to your history, and you can download a full backup at any time.</p></div>
+</div>
+<h3 style="margin:36px 0 12px">Prove a fact without handing over the document</h3>
+<div class="grid g2">
+<div class="card"><h3>Sharing the full certificate</h3>
+<dl class="kv"><div><dt>Name</dt><dd>Aarav Sharma</dd></div><div><dt>Course</dt><dd>B.Tech, Computer Science</dd></div><div><dt>Grade</dt><dd>84%</dd></div><div><dt>Year</dt><dd>2026</dd></div></dl>
+<p style="color:var(--mut)">The verifier sees everything, and nothing stops the file being copied or edited later.</p></div>
+<div class="card gold"><h3>Sharing a CertiChain privacy proof</h3>
+<dl class="kv"><div><dt>Name</dt><dd><span class="redact"></span></dd></div><div><dt>Course</dt><dd><span class="redact"></span></dd></div><div><dt>Grade</dt><dd><span class="redact"></span></dd></div><div><dt>Degree completed</dt><dd style="color:var(--ok)">Yes</dd></div><div><dt>Grade above 60%</dt><dd style="color:var(--ok)">Yes</dd></div></dl>
+<p style="color:var(--mut)">The verifier checks each fact against the ledger. The rest stays hidden.</p></div>
+</div>
+<h3 style="margin:36px 0 4px">Questions</h3>
+<div class="faq">
+<details><summary>Is the blockchain real?</summary><p>Yes. Every certificate is written into a block with a SHA-256 hash, a link to the previous block and a mined proof of work. The chain lives in this site's shared database, so it works like a private or consortium ledger. It is not a public network such as Ethereum, and the admin dashboard can re-validate every block at any time.</p></details>
+<details><summary>Are the privacy proofs true zk-SNARKs?</summary><p>No. They are salted Merkle proofs, a standard selective-disclosure technique. The verifier learns only the fields you tick and checks them against the on-chain root. Range statements such as "grade above 60%" work because the issuer commits that fact as its own field when the certificate is issued.</p></details>
+<details><summary>Is my file uploaded anywhere?</summary><p>It is hashed in your browser. If an image does not match an issued original, you can allow Claude to examine it for signs of forgery, and only then is the image sent for analysis.</p></details>
+<details><summary>Can a screenshot or photo of a certificate be verified?</summary><p>Yes, if you also have its verification code, which is in the certificate's QR code. The AI reads the name, course, grade, year and institution printed on the copy and compares them with the record the institution registered, so an edited grade or name is caught. Without the code, the copy is still examined for signs of editing, and you still get a clear Original or Fake.</p></details>
+<details><summary>Who can issue certificates?</summary><p>Only the owner and editors of this site. Everyone else can verify, keep a wallet and rate results.</p></details>
+<details><summary>What if a real certificate is flagged?</summary><p>The report shows which signal failed. Low-quality scans can lower the pixel and AI scores, so an admin can review the case.</p></details>
+</div></div></div>
+<p class="mono" style="margin-top:30px;color:var(--mut)">Built with SHA-256 hash-linked blocks with proof of work, Merkle selective disclosure, AES-GCM sealed details, and AI plus pixel-level forensics.</p>
+</div>
+</section>
+
+<section id="verify" class="view">
+<h2>Verify a certificate</h2><p class="sub">Upload any certificate or document, even one that was never stored here, and get one clear answer: Original or Fake.</p>
+<div class="grid g2">
+<div class="card">
+<label for="vfile">Certificate or document (image or PDF)</label>
+<div class="drop big"><input type="file" id="vfile" accept="image/*,.pdf"><div id="fname" style="margin-top:8px">Checking starts as soon as you choose the file.</div></div>
+<div class="row" style="margin-top:14px"><button class="btn gold" id="vgo">Check now</button><button class="btn ghost" id="vreset" type="button">Clear</button><button class="btn ghost sm" id="vscan" type="button">Scan QR</button></div>
+<p id="aistat" style="margin:12px 0 0"></p>
+<video id="cam" playsinline muted style="display:none;width:100%;margin-top:8px;border-radius:4px"></video>
+<details class="opt" style="margin-top:18px"><summary>Optional: ID, verification code or privacy proof</summary>
+<label for="vid" style="margin-top:12px">Certificate ID</label><input id="vid" placeholder="CERT-2026-A1B2C3">
+<label for="vcode" style="margin-top:12px">Verification code</label><input id="vcode" placeholder="12 characters" autocomplete="off">
+<label for="vproof" style="margin-top:12px">Privacy proof</label><textarea id="vproof" rows="3" placeholder="Paste a proof shared by a student"></textarea></details>
+</div>
+<div class="card" id="vout"><p style="color:var(--mut)">The result appears here.</p></div>
+</div>
+</section>
+
+<section id="issue" class="view">
+<h2>Issue certificate</h2><p class="sub">Register a certificate on the ledger. Only editors and the owner of this site can do this.</p>
+<div id="issuelock" class="card" style="display:none">You do not have permission to issue certificates. Ask the site owner for editor access. You can still verify certificates from the dashboard.</div>
+<div id="issuebody" class="grid g2">
+<div class="card"><h3 style="margin-bottom:12px">Certificate details</h3>
+<label for="in">Student name</label><input id="in"><div style="height:8px"></div>
+<label for="ic">Course</label><input id="ic"><div style="height:8px"></div>
+<div class="grid g2" style="gap:8px"><div><label for="ig">Grade (%)</label><input id="ig" type="number" min="0" max="100"></div><div><label for="iy">Year</label><input id="iy" type="number" value="2026"></div></div><div style="height:8px"></div>
+<label for="ii">Institution</label><input id="ii" placeholder="Orion Institute of Technology"><div style="height:8px"></div>
+<label for="ifile">Certificate file (attach the exact original document)</label><input type="file" id="ifile" accept="image/*,.pdf">
+<div class="row" style="margin-top:12px"><button class="btn" id="igo">Issue and mine block</button></div><p id="imsg" class="mono" style="color:var(--mut)"></p></div>
+<div class="card"><h3 style="margin-bottom:10px">What happens when you issue</h3>
+<ol style="padding-left:20px;margin:0;color:var(--mut)"><li style="margin-bottom:8px">The document is fingerprinted with SHA-256 in your browser.</li><li style="margin-bottom:8px">The student's details are sealed with a new 12-character verification code.</li><li style="margin-bottom:8px">A block is mined and linked to the previous block on the ledger.</li><li>A credential file downloads. Give it to the student, and share the code with anyone who should compare details.</li></ol></div>
+</div>
+</section>
+
+<section id="history" class="view">
+<h2>History and backup</h2><p class="sub">Everything you verified or issued, newest first. Only you can see it.</p>
+<div class="row" style="margin-bottom:12px"><label for="hfilter" style="margin:0">Show</label><select id="hfilter" style="width:auto"><option value="all">All</option><option value="ok">Verified original</option><option value="bad">Flagged fake</option><option value="issue">Issued by me</option></select></div>
+<div class="card wrap"><table><thead><tr><th>Time</th><th>Type</th><th>Certificate or file</th><th>Result</th><th>Why</th><th>Your rating</th></tr></thead><tbody id="hbody"></tbody></table>
+<p id="hempty" style="color:var(--mut)">Nothing here yet.</p></div>
+<div class="row" style="margin-top:12px"><button class="btn ghost sm" id="hcsv">Export history (CSV)</button><button class="btn ghost sm" id="hclear">Clear history</button></div>
+<div class="card" style="margin-top:24px"><h3 style="margin-bottom:6px">Backup and restore</h3>
+<p id="bkstat" style="margin-bottom:6px"></p>
+<p style="color:var(--mut)">The backup file holds your history, issued certificates and wallet (editors also get the full ledger). Keep a copy somewhere safe, such as Google Drive or email. If data is ever lost, restore it from this file.</p>
+<div class="row"><button class="btn" id="bkdl">Download full backup</button></div>
+<div class="row" style="margin-top:14px"><input type="file" id="bkfile" accept=".json,application/json" style="max-width:320px"><button class="btn ghost" id="bkrestore">Restore from backup</button></div></div>
+</section>
+
+<section id="issuedcerts" class="view">
+<h2>Issued certificates</h2><p class="sub" id="issuedSub"></p>
+<div id="adminIssued" style="display:none;margin-bottom:28px">
+<div class="grid g4" id="astats"></div>
+<div class="card wrap" style="margin-top:16px"><h3 style="margin-bottom:8px">Certificates you issued</h3><table><thead><tr><th>ID</th><th>Student</th><th>Course</th><th>Status</th><th></th></tr></thead><tbody id="issued"></tbody></table></div>
+<div class="card wrap" style="margin-top:16px"><div class="row" style="justify-content:space-between"><h3>Ledger</h3><button class="btn ghost sm" id="vchain">Validate whole chain</button></div><p id="chainmsg" style="margin:8px 0"></p><table><thead><tr><th>#</th><th>Block hash</th><th>Previous</th><th>Nonce</th><th>Certificate</th></tr></thead><tbody id="ledger"></tbody></table></div>
+</div>
+<h3 style="margin-bottom:10px">Your wallet</h3>
+<div class="card"><label for="cfile">Credential file (.json)</label><input type="file" id="cfile" accept=".json,application/json"><div class="row" style="margin-top:10px"><button class="btn" id="cimp">Import credential</button></div></div>
+<div class="grid g2" id="slist" style="margin-top:16px"></div>
+<div class="card" id="pbuild" style="margin-top:16px;display:none"><h3>Share a privacy proof</h3>
+<p style="color:var(--mut)">Tick what the verifier may see. Everything else stays hidden but still verifiable against the ledger.</p>
+<div id="pfields"></div><div class="row" style="margin-top:10px"><button class="btn" id="pgo">Generate proof</button></div><div id="pout" style="margin-top:14px"></div></div>
+
+</section>
+
+<section id="detected" class="view">
+<h2>Detected certificates</h2><p class="sub" id="detSub"></p>
+<div class="card wrap"><div id="alerts"></div></div>
+<div id="adminDet" class="grid g2" style="display:none;margin-top:16px">
+<div class="card"><h3 style="margin-bottom:28px">Verifications, last 7 days</h3><div class="chart" id="chart"></div><div style="height:18px"></div></div>
+<div class="card"><h3 style="margin-bottom:8px">Trust score and feedback</h3><div id="fbbox"></div></div>
+</div>
+</section>
+
+
+<section id="login" class="view">
+<div class="authwrap">
+<div class="authside"><h2>Welcome back</h2><p>Log in to verify, issue and manage certificates.</p><ul>
+<li><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Tamper-evident certificates on a mined ledger</li>
+<li><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>AI forgery checks in seconds</li>
+<li><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Privacy proofs, share only what is needed</li></ul></div>
+<div class="authform">
+<h1>Log in</h1><p class="sub">Enter your email and password to continue.</p>
+<div class="autherr" id="lerr" role="alert"></div>
+<div class="fld"><label for="lemail">Email</label><input id="lemail" type="email" autocomplete="email" placeholder="you@example.com"></div>
+<div class="fld"><label for="lpass">Password</label><div class="pwbox"><input id="lpass" type="password" autocomplete="current-password" placeholder="Your password"><button type="button" class="pwtoggle" data-pw="lpass" aria-label="Show password">Show</button></div></div>
+<div class="fld"><label class="chk"><input type="checkbox" id="lremember" checked> Keep me logged in on this device</label></div>
+<button class="btn" id="dologin">Log in</button>
+<p class="authswitch">New to CertiChain? <button class="linkbtn" data-v="signup">Create an account</button></p>
+</div></div>
+</section>
+
+<section id="signup" class="view">
+<div class="authwrap">
+<div class="authside"><h2>Create your account</h2><p>Join CertiChain AI to start issuing and verifying trusted certificates.</p><ul>
+<li><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Tamper-evident certificates on a mined ledger</li>
+<li><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>AI forgery checks in seconds</li>
+<li><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Privacy proofs, share only what is needed</li></ul></div>
+<div class="authform">
+<h1>Sign up</h1><p class="sub">It takes less than a minute.</p>
+<div class="autherr" id="serr" role="alert"></div>
+<div class="fld"><label for="sname">Full name</label><input id="sname" type="text" autocomplete="name" placeholder="Your name"></div>
+<div class="fld"><label for="semail">Email</label><input id="semail" type="email" autocomplete="email" placeholder="you@example.com"></div>
+<div class="fld"><label for="spass">Password</label><div class="pwbox"><input id="spass" type="password" autocomplete="new-password" placeholder="At least 8 characters"><button type="button" class="pwtoggle" data-pw="spass" aria-label="Show password">Show</button></div>
+<div class="sbar" id="sbar"><i></i><i></i><i></i><i></i></div><div class="fhint" id="shint">Use 8+ characters with letters and numbers.</div></div>
+<div class="fld"><label for="spass2">Confirm password</label><input id="spass2" type="password" autocomplete="new-password" placeholder="Repeat your password"></div>
+<button class="btn" id="dosignup">Create account</button>
+<p class="authswitch">Already have an account? <button class="linkbtn" data-v="login">Log in</button></p>
+</div></div>
+</section>
+
+<section id="signedout" class="view">
+<div class="card signed"><h2 style="margin-bottom:10px">You are signed out</h2><p style="color:var(--mut)">Your form fields and wallet view were cleared from this page. To sign out of your Claude account completely, use claude.ai.</p><button class="btn" id="signin" style="margin-top:8px">Log in again</button></div>
+</section>
+</main>
+
+<footer><div class="ct"><div class="fbase" style="border:0;margin:0;padding:0">© 2026 CertiChain AI. Tamper-evident certificates with a mined ledger, AI forgery checks and privacy proofs.</div></div></footer>
+<div class="toast" id="toast" role="status"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.js"></script>
+<script>
+const use=n=>window.claude?window.claude.use(n).catch(()=>null):Promise.resolve(null);
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+async function sha(t){const b=await crypto.subtle.digest('SHA-256',typeof t==='string'?new TextEncoder().encode(t):t);return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+function toast(m){const t=$('#toast');t.textContent=m;t.style.display='block';clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',3200)}
+function qr(el,text,size=96){el.innerHTML='';try{new QRCode(el,{text,width:size,height:size,colorDark:'#000',colorLight:'#fff'})}catch(e){el.textContent=text}}
+/* Set this to your AI server address (see ai-server.js) when this page is hosted outside claude.ai, e.g. 'https://your-server.com/analyze' */
+const AI_URL='';
+/* Shared database and login (Firebase). Paste the values from Firebase console > Project settings > Your apps > Web app.
+   Leave apiKey empty to run in demo mode, where everything stays in this browser only. */
+const FIREBASE_CONFIG={apiKey:'',authDomain:'',projectId:'',appId:''};
+const DIFF='000',ZERO='0'.repeat(64),SITE=(/claude/i.test(location.hostname)||!/^https?:/.test(location.protocol))?'https://claude.ai/artifact/XzpXRXDoiwRedgnkU3uEFc':location.href.split('#')[0];
+const KEYS=['name','course','grade','year','institution','degreeCompleted','gradeAbove60','accredited','fileHash'];
+const LBL={name:'Full name',course:'Course',grade:'Grade (%)',year:'Year',institution:'Institution',degreeCompleted:'Degree completed',gradeAbove60:'Grade above 60%',accredited:'Accredited institution',fileHash:'Document fingerprint'};
+const pad=n=>String(n).padStart(7,'0'),rnd=n=>[...crypto.getRandomValues(new Uint8Array(n))].map(b=>b.toString(16).padStart(2,'0')).join('');
+const canon=o=>JSON.stringify(o,Object.keys(o).sort());
+const ago=t=>new Date(t).toLocaleString();
+let db=null,sample=null,dl=null,user=null,uid=null,isAdmin=false,myName='',avatar='',fb=null,fbUser=null,pendingV=null;
+
+/* ---------- ledger and Merkle primitives ---------- */
+const bHash=b=>sha([b.i,b.prev,b.ts,canon(b.data),b.nonce].join('|'));
+async function mine(b){b.nonce=0;for(;;){b.hash=await bHash(b);if(b.hash.startsWith(DIFF))return b;b.nonce++}}
+async function put(b){await mine(b);const r=db.doc('chain/b'+pad(b.i));if((await r.get()).exists)throw new Error('Another block was added at the same moment. Please try again.');await r.set(b);return b}
+async function addBlock(data){const last=()=>db.collection('chain').orderBy('i','desc').limit(1).get();let q=await last();
+  if(q.empty){await put({i:0,prev:ZERO,ts:Date.now(),data:{genesis:true},nonce:0});q=await last()}
+  const l=q.docs[0].data();return put({i:l.i+1,prev:l.hash,ts:Date.now(),data,nonce:0})}
+async function chainOk(c){const s=await db.doc('chain/b'+pad(c.block)).get();if(!s.exists)return false;const b=s.data();
+  if(b.hash!==await bHash(b)||!b.hash.startsWith(DIFF)||b.data.certId!==c.id||b.data.root!==c.root)return false;
+  if(b.i>0){const p=await db.doc('chain/b'+pad(b.i-1)).get();if(!p.exists||p.data().hash!==b.prev)return false}return true}
+const leafH=(k,v,s)=>sha(k+':'+JSON.stringify(v)+':'+s);
+async function tree(leaves){const L=[leaves.concat(Array(16-leaves.length).fill(ZERO))];while(L.at(-1).length>1){const p=L.at(-1),n=[];for(let i=0;i<p.length;i+=2)n.push(await sha(p[i]+p[i+1]));L.push(n)}return L}
+const pathOf=(L,i)=>{const o=[];for(let l=0;l<L.length-1;l++){o.push(L[l][i^1]);i>>=1}return o};
+async function climb(h,i,p){for(const s of p){h=(i&1)?await sha(s+h):await sha(h+s);i>>=1}return h}
+async function checkProof(p,c){if(p.id!==c.id||p.root!==c.root)return{ok:false,why:'it belongs to a different certificate'};
+  for(const it of p.items){if(KEYS[it.i]!==it.k)return{ok:false,why:'field order is wrong'};const r=await climb(await leafH(it.k,it.v,it.salt),it.i,it.path);if(r!==c.root)return{ok:false,why:'"'+(LBL[it.k]||it.k)+'" does not match the ledger'}}
+  return{ok:true,shown:p.items}}
+
+/* ---------- document forensics ---------- */
+async function shrink(file,max){const bmp=await createImageBitmap(file),sc=Math.min(1,max/Math.max(bmp.width,bmp.height)),c=document.createElement('canvas');c.width=Math.max(1,bmp.width*sc|0);c.height=Math.max(1,bmp.height*sc|0);c.getContext('2d').drawImage(bmp,0,0,c.width,c.height);return c}
+async function meta(f){const t=new TextDecoder('latin1').decode(new Uint8Array(await f.slice(0,262144).arrayBuffer()));const m=t.match(/(Photoshop|GIMP|Canva|Adobe Illustrator|Paint\.NET|Pixlr|Snapseed|Lightroom|Affinity|PDFescape|iLovePDF|Sejda)/i);return m?m[1]:null}
+async function ela(f){const c=await shrink(f,700),w=c.width,h=c.height,a=c.getContext('2d').getImageData(0,0,w,h).data,img=new Image();img.src=c.toDataURL('image/jpeg',.9);await img.decode();
+  const d=document.createElement('canvas');d.width=w;d.height=h;const y=d.getContext('2d');y.drawImage(img,0,0);const b=y.getImageData(0,0,w,h).data,B=16,m=[];
+  for(let by=0;by+B<=h;by+=B)for(let bx=0;bx+B<=w;bx+=B){let s=0;for(let j=0;j<B;j++)for(let i=0;i<B;i++){const p=((by+j)*w+bx+i)*4;s+=Math.abs(a[p]-b[p])+Math.abs(a[p+1]-b[p+1])+Math.abs(a[p+2]-b[p+2])}m.push(s/(B*B*3))}
+  m.sort((p,q)=>p-q);const ratio=m[Math.floor(m.length*.98)]/(m[m.length>>1]+.5);return{ratio:+ratio.toFixed(1),score:Math.round(Math.max(8,Math.min(98,100-(ratio-1.5)*14)))}}
+async function pdfInfo(f){const t=new TextDecoder('latin1').decode(new Uint8Array(await f.arrayBuffer()));
+  const g=r=>((t.match(r)||[])[1]||'').trim();return{eof:(t.match(/%%EOF/g)||[]).length,producer:g(/\/Producer\s*\(([^)]{0,80})\)/),creator:g(/\/Creator\s*\(([^)]{0,80})\)/)}}
+/* Built-in judgement, used when the AI engine is not reachable. It only looks for hard evidence of editing. */
+function localJudge(fo,pdf){const R=[];let pts=0;
+  if(fo&&fo.meta){if(/Canva|Illustrator/i.test(fo.meta)){pts+=1;R.push('the file was made or saved with '+fo.meta)}else{pts+=2;R.push('the file was saved by editing software ('+fo.meta+')')}}
+  if(pdf){const ed=(pdf.producer+' '+pdf.creator).match(/(Photoshop|GIMP|PDFescape|iLovePDF|Sejda|Smallpdf|Foxit PhantomPDF|Nitro)/i);if(ed){pts+=2;R.push('the PDF was produced by an editing tool ('+ed[1]+')')}
+    if(pdf.eof>1){pts+=1;R.push('the PDF was changed after it was first created')}}
+  return{fake:pts>=2,reasons:R}}
+async function remoteAI(P,blobs){const imgs=await Promise.all(blobs.map(b=>new Promise(r=>{const fr=new FileReader();fr.onload=()=>r(fr.result.split(',')[1]);fr.readAsDataURL(b)})));const r=await fetch(AI_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:P,images:imgs})});if(!r.ok)throw new Error('AI server error '+r.status);return r.json()}
+async function aiScan(f){let multi=true;if(sample){const lim=await sample.limits().catch(()=>null);if(!lim||!lim.images)return null;multi=(lim.images.maxCount||1)>=5}else if(!AI_URL)return null;
+  const bmp=await createImageBitmap(f),W=bmp.width,H=bmp.height,mk=(sx,sy,sw,sh,max)=>{const sc=Math.min(1,max/Math.max(sw,sh)),c=document.createElement('canvas');c.width=Math.max(1,sw*sc|0);c.height=Math.max(1,sh*sc|0);c.getContext('2d').drawImage(bmp,sx,sy,sw,sh,0,0,c.width,c.height);return new Promise(r=>c.toBlob(r,'image/jpeg',.9))};
+  const blobs=[await mk(0,0,W,H,1400)];
+  if(multi&&Math.max(W,H)>900){const tw=W*.6,th=H*.6;for(const y of[0,H-th])for(const x of[0,W-tw])blobs.push(await mk(x,y,tw,th,1200))}
+  const P=`You are a careful forensic document examiner. The images show one certificate or official document (degree, marksheet, transcript, ID, letter): the first is the whole page, any others are zoomed tiles of its top-left, top-right, bottom-left and bottom-right areas. Do two things.
+1) Judge only concrete visible evidence of editing or forgery, such as inconsistent fonts or sizes within one line, text misaligned with its neighbours, cloned or pasted regions, mismatched backgrounds around text, spelling mistakes, or an obviously fake seal or signature. Do NOT penalise low resolution, compression, phone photos, screenshots, scan noise, shadows, unusual design or decorative fonts. If you see no concrete evidence of tampering, give high scores (80 or more) and leave anomalies empty. List an anomaly only when you can point to it.
+2) Read the printed values exactly as written: student name, course or degree, grade or percentage, year, and institution. Use an empty string for anything you cannot read clearly. Never guess.
+3) Set verdict to "fake" only when you see concrete evidence of editing or fabrication, or the page is not a certificate or official document at all. Otherwise set it to "original".
+Return ONLY JSON: {"isCertificate":true or false,"verdict":"original" or "fake","looksGenuine":0-100,"checks":{"fonts":0-100,"seal":0-100,"layout":0-100,"tamperSigns":0-100},"anomalies":["short strings"],"summary":"one or two sentences","extracted":{"name":"","course":"","grade":"","year":"","institution":""}}. For every score, a higher number means more authentic.`;
+  return sample?sample.json(P,{images:blobs,modelTier:'default',cache:false}):remoteAI(P,blobs)}
+
+/* ---------- sealed details and content comparison ---------- */
+const b64=u=>btoa(String.fromCharCode(...u)),ub64=t=>Uint8Array.from(atob(t),c=>c.charCodeAt(0));
+async function kdf(code,id){const k=await crypto.subtle.importKey('raw',new TextEncoder().encode(code),'PBKDF2',false,['deriveKey']);return crypto.subtle.deriveKey({name:'PBKDF2',salt:new TextEncoder().encode(id),iterations:120000,hash:'SHA-256'},k,{name:'AES-GCM',length:256},false,['encrypt','decrypt'])}
+async function seal(o,code,id){const iv=crypto.getRandomValues(new Uint8Array(12)),ct=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv},await kdf(code,id),new TextEncoder().encode(JSON.stringify(o))));return{iv:b64(iv),ct:b64(ct)}}
+async function unseal(e,code,id){try{return JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:ub64(e.iv)},await kdf(code,id),ub64(e.ct))))}catch(x){return null}}
+const nz=(k,v)=>{v=String(v==null?'':v).toLowerCase();if(k==='grade'){const m=v.match(/\d+(\.\d+)?/);return m?String(+m[0]):''}if(k==='year'){const m=v.match(/\d{4}/);return m?m[0]:''}return v.replace(/[^a-z0-9]+/g,' ').trim()};
+const lev=(a,b)=>{const m=[...Array(a.length+1)].map((_,i)=>[i,...Array(b.length).fill(0)]);for(let j=1;j<=b.length;j++)m[0][j]=j;for(let i=1;i<=a.length;i++)for(let j=1;j<=b.length;j++)m[i][j]=Math.min(m[i-1][j]+1,m[i][j-1]+1,m[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return m[a.length][b.length]};
+function compareFields(reg,ex){return['name','course','grade','year','institution'].map(k=>{const a=nz(k,reg[k]),b=nz(k,ex&&ex[k]);let st;
+  if(!b)st='na';else if(a===b)st='ok';else if(k==='grade'||k==='year')st='bad';
+  else if(k!=='name'&&Math.min(a.length,b.length)>=5&&(a.includes(b)||b.includes(a)))st='ok';
+  else st=(1-lev(a,b)/Math.max(a.length,b.length))>=.85?'near':'bad';
+  return{k,reg:reg[k],ex:b?ex[k]:'(not read)',st}})}
+
+/* ---------- PDF to image, backup helpers ---------- */
+let pdfP=null;
+function loadPdf(){return pdfP||(pdfP=new Promise((res,rej)=>{const sc=document.createElement('script');sc.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';sc.onload=async()=>{try{const w=await(await fetch('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js')).blob();pdfjsLib.GlobalWorkerOptions.workerSrc=URL.createObjectURL(w);res(pdfjsLib)}catch(e){rej(e)}};sc.onerror=rej;document.head.appendChild(sc)}))}
+async function asImage(f){if(f._img!==undefined)return f._img;let r=null;
+  if(f.type.startsWith('image/'))r=f;
+  else if(f.type==='application/pdf'||/\.pdf$/i.test(f.name)){try{const L=await loadPdf(),d=await L.getDocument({data:new Uint8Array(await f.arrayBuffer())}).promise,p=await d.getPage(1),v=p.getViewport({scale:2}),c=document.createElement('canvas');c.width=v.width;c.height=v.height;await p.render({canvasContext:c.getContext('2d'),viewport:v}).promise;r=await new Promise(x=>c.toBlob(x,'image/png'))}catch(e){r=null}}
+  f._img=r;return r}
+const bump=()=>{const n=(+store.get('cc_unsaved')||0)+1;store.set('cc_unsaved',String(n));if(n%10===0)setTimeout(()=>toast('10 new records since your last backup. Download a backup from History.'),1200)};
+async function collect(path){const q=await db.collection(path).get();return q.docs.map(d=>Object.assign({_id:d.id},d.data()))}
+async function makeBackup(){const u='data/users/'+uid,B={app:'CertiChain AI',v:2,at:Date.now(),by:currentEmail()||uid,history:await collect(u+'/history'),wallet:await collect(u+'/wallet'),issued:await collect(u+'/issued')};
+  if(isAdmin){B.certs=await collect('certs');B.chain=await collect('chain');B.audits=await collect('audits')}return B}
+async function restoreBackup(B){if(!B||B.app!=='CertiChain AI')throw new Error('This is not a CertiChain backup file.');let n=0;
+  const put=async(path,rows,keep)=>{for(const r of rows||[]){const o=Object.assign({},r),id=o._id;delete o._id;if(!id)continue;try{if(keep&&(await db.doc(path+'/'+id).get()).exists)continue;await db.doc(path+'/'+id).set(o);n++}catch(e){}}};
+  const u='data/users/'+uid;await put(u+'/history',B.history);await put(u+'/wallet',B.wallet);await put(u+'/issued',B.issued);
+  if(isAdmin){await put('chain',B.chain,true);await put('certs',B.certs,true);await put('audits',B.audits)}return n}
+function bkInfo(){const t=+store.get('cc_lastbk')||0,n=+store.get('cc_unsaved')||0,h=(t?'Last backup: <b>'+ago(t)+'</b>':'<b>No backup yet.</b>')+' · '+n+' new record'+(n===1?'':'s')+' since then. '+(n>0?'<span class="pill p-warn">Backup recommended</span>':'<span class="pill p-ok">Up to date</span>')+(localMode?'<br><span style="font-size:14px">Your data is stored in this browser only. A backup protects it if the browser data is cleared.</span>':'');$('#bkstat').innerHTML=h;$('#bkdash').innerHTML=h}
+
+/* ---------- navigation ---------- */
+function openMenu(o){document.body.classList.toggle('menu-open',o);$('#menuBtn').setAttribute('aria-expanded',String(o))}
+function show(v){if(!AUTH_VIEWS.includes(v)&&!currentAcct())v='login';openMenu(false);$$('.view').forEach(s=>s.classList.toggle('on',s.id===v));$$('.dmenu button[data-v]').forEach(b=>b.dataset.v===v?b.setAttribute('aria-current','page'):b.removeAttribute('aria-current'));document.body.classList.toggle('signed-out',AUTH_VIEWS.includes(v));document.body.classList.toggle('auth-mode',AUTH_VIEWS.includes(v));
+  if(v==='dashboard')renderDash();if(v==='issue')renderIssue();if(v==='issuedcerts')renderIssued();if(v==='detected')renderDetected();if(v==='history')renderHist();scrollTo(0,0)}
+function goSection(id){show('dashboard');setTimeout(()=>{const e=document.getElementById(id);if(e)e.scrollIntoView({behavior:'smooth',block:'start'})},80)}
+$$('[data-v]').forEach(b=>b.onclick=()=>show(b.dataset.v));
+$$('[data-go]').forEach(b=>b.onclick=()=>show(b.dataset.go));
+$$('[data-scroll]').forEach(b=>b.onclick=()=>goSection(b.dataset.scroll));
+$('#menuBtn').onclick=$('#profileBtn').onclick=()=>openMenu(!document.body.classList.contains('menu-open'));
+$('#scrim').onclick=()=>openMenu(false);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')openMenu(false)});
+$('#signout').onclick=()=>{['#vid','#vcode','#vproof'].forEach(x=>$(x).value='');$('#vfile').value='';$('#vout').innerHTML='<p style="color:var(--mut)">Results appear here.</p>';$('#pbuild').style.display='none';$('#slist').innerHTML='';cur=null;sess.del();store.del('cc_session');myName='';if(localMode||fb){uid=null;isAdmin=false}if(fb){fb.auth.signOut().catch(()=>{});fbUser=null}setWho();show('signedout')};
+$('#signin').onclick=()=>show('login');
+
+/* ---------- local fallback (used when the claude.ai database is not available) ---------- */
+let localMode=false;
+function makeLocalDB(){
+  const KEY='cc_localdb';let M={};try{M=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(M))}catch(e){}};
+  const clone=o=>o==null?o:JSON.parse(JSON.stringify(o));
+  const dsnap=(path,exists)=>({id:path.split('/').pop(),exists,data:()=>clone(M[path])});
+  const docRef=path=>({
+    async get(){return dsnap(path,path in M)},
+    async set(d){M[path]=clone(d);save()},
+    async update(d){if(!(path in M))throw new Error('Document not found');M[path]=Object.assign({},M[path],clone(d));save()},
+    async delete(){delete M[path];save()}});
+  const query=(col,filters,ord,lim)=>({
+    where(f,op,v){return query(col,[...filters,[f,op,v]],ord,lim)},
+    orderBy(f,dir){return query(col,filters,[f,dir||'asc'],lim)},
+    limit(n){return query(col,filters,ord,n)},
+    async get(){let paths=Object.keys(M).filter(k=>k.startsWith(col+'/')&&!k.slice(col.length+1).includes('/'));
+      let rows=paths.map(k=>[k,M[k]]);
+      for(const [f,op,v] of filters)rows=rows.filter(([,d])=>op==='=='?d[f]===v:op==='!='?d[f]!==v:op==='>'?d[f]>v:op==='>='?d[f]>=v:op==='<'?d[f]<v:op==='<='?d[f]<=v:true);
+      if(ord){const [f,dir]=ord;rows.sort((a,b)=>(a[1][f]>b[1][f]?1:a[1][f]<b[1][f]?-1:0)*(dir==='desc'?-1:1))}
+      if(lim)rows=rows.slice(0,lim);
+      const docs=rows.map(([k])=>dsnap(k,true));return{docs,size:docs.length,empty:!docs.length,forEach:f=>docs.forEach(f)}},
+    async add(d){const id=rnd(10);const path=col+'/'+id;M[path]=clone(d);save();return docRef(path)}});
+  return{collection:c=>query(c,[],null,0),doc:docRef};
+}
+function makeLocalDownloads(){return{async save({filename,data}){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type:'text/plain'}));a.download=filename;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}}}
+function applyLocalIdentity(){if(!localMode)return;const e=currentEmail();uid=e||null;isAdmin=!!e}
+
+/* ---------- login / sign up (stored in this browser only) ---------- */
+const AUTH_VIEWS=['login','signup','signedout'];
+const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
+const sess={get(){try{return sessionStorage.getItem('cc_session')}catch(e){return null}},set(v){try{sessionStorage.setItem('cc_session',v)}catch(e){}},del(){try{sessionStorage.removeItem('cc_session')}catch(e){}}};
+const getUsers=()=>{try{return JSON.parse(store.get('cc_users')||'{}')}catch(e){return{}}};
+const saveUsers=u=>store.set('cc_users',JSON.stringify(u));
+const hex=b=>[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');
+async function hashPw(pw,saltHex){const salt=Uint8Array.from(saltHex.match(/../g).map(h=>parseInt(h,16)));const k=await crypto.subtle.importKey('raw',new TextEncoder().encode(pw),'PBKDF2',false,['deriveBits']);return hex(await crypto.subtle.deriveBits({name:'PBKDF2',salt,iterations:150000,hash:'SHA-256'},k,256))}
+const currentEmail=()=>fb?(fbUser?fbUser.email:null):(sess.get()||store.get('cc_session'));
+const currentAcct=()=>{if(fb)return fbUser?{name:fbUser.displayName||fbUser.email,email:fbUser.email}:null;const e=currentEmail();return e?(getUsers()[e]||null):null};
+const validEmail=e=>/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e);
+function pwScore(p){let s=0;if(p.length>=8)s++;if(/[a-z]/.test(p)&&/[A-Z]/.test(p))s++;if(/\d/.test(p))s++;if(/[^A-Za-z0-9]/.test(p)||p.length>=12)s++;return s}
+function authErr(id,m){const e=$(id);e.textContent=m||'';e.classList.toggle('on',!!m)}
+function startSession(email,remember){const a=getUsers()[email];sess.set(email);if(remember)store.set('cc_session',email);else store.del('cc_session');myName=a.name;applyLocalIdentity();setWho();show('dashboard');toast('Welcome, '+a.name.split(' ')[0]);runPending()}
+/* ---------- Firebase: shared database and real accounts ---------- */
+const FS_PATH=p=>p.replace(/^data\/users\//,'users/');
+const loadScript=src=>new Promise((res,rej)=>{const e=document.createElement('script');e.src=src;e.onload=res;e.onerror=()=>rej(new Error('Could not load '+src));document.head.appendChild(e)});
+async function initFirebase(){if(!FIREBASE_CONFIG.apiKey)return false;
+  try{const base='https://www.gstatic.com/firebasejs/10.12.2/';await loadScript(base+'firebase-app-compat.js');await Promise.all([loadScript(base+'firebase-auth-compat.js'),loadScript(base+'firebase-firestore-compat.js')]);
+    firebase.initializeApp(FIREBASE_CONFIG);const auth=firebase.auth(),fs=firebase.firestore();
+    fb={auth,fs,db:{collection:c=>fs.collection(FS_PATH(c)),doc:p=>fs.doc(FS_PATH(p))}};
+    await new Promise(r=>{const un=auth.onAuthStateChanged(u=>{fbUser=u;un();r()})});return true}
+  catch(e){fb=null;console.error('Firebase could not start',e);return false}}
+async function applyFbIdentity(){uid=fbUser?fbUser.uid:null;isAdmin=false;if(uid){try{isAdmin=(await db.doc('admins/'+uid).get()).exists}catch(e){}}if(fbUser)myName=fbUser.displayName||fbUser.email||''}
+const FB_ERR={'auth/invalid-credential':'Incorrect email or password.','auth/wrong-password':'Incorrect email or password.','auth/user-not-found':'Incorrect email or password.','auth/invalid-email':'Enter a valid email address.','auth/email-already-in-use':'An account with this email already exists. Try logging in.','auth/weak-password':'Choose a stronger password.','auth/too-many-requests':'Too many attempts. Wait a few minutes and try again.','auth/network-request-failed':'No internet connection.','auth/unauthorized-domain':'This website address is not authorised in Firebase. Add it under Authentication > Settings > Authorized domains.'};
+async function fbEnter(){await applyFbIdentity();setWho();show('dashboard');toast('Welcome, '+(myName||'').split(' ')[0]);runPending()}
+async function fbLogin(email,pw,remember){try{const P=firebase.auth.Auth.Persistence;await fb.auth.setPersistence(remember?P.LOCAL:P.SESSION);const c=await fb.auth.signInWithEmailAndPassword(email,pw);fbUser=c.user;$('#lpass').value='';await fbEnter()}catch(e){authErr('#lerr',FB_ERR[e.code]||'Could not log in. Try again.')}}
+async function fbSignup(name,email,pw){try{await fb.auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);const c=await fb.auth.createUserWithEmailAndPassword(email,pw);await c.user.updateProfile({displayName:name});fbUser=fb.auth.currentUser;['#sname','#semail','#spass','#spass2'].forEach(x=>$(x).value='');await fbEnter()}catch(e){authErr('#serr',FB_ERR[e.code]||'Could not create the account. Try again.')}}
+function runPending(){const m=pendingV;if(m&&db&&currentAcct()&&!/SAMPLE/i.test(m[1])){pendingV=null;$('#vid').value=m[1].toUpperCase();if(m[2])$('#vcode').value=m[2].toUpperCase();show('verify');verify()}}
+$$('[data-pw]').forEach(b=>b.onclick=()=>{const i=document.getElementById(b.dataset.pw),h=i.type==='password';i.type=h?'text':'password';b.textContent=h?'Hide':'Show';b.setAttribute('aria-label',h?'Hide password':'Show password')});
+$('#spass').oninput=()=>{const s=pwScore($('#spass').value),c=['var(--bad)','var(--bad)','var(--warn)','var(--ok)','var(--ok)'][s];$$('#sbar i').forEach((x,i)=>x.style.background=i<s?c:'');$('#shint').textContent=$('#spass').value?['Too weak','Weak','Okay','Good','Strong'][s]:'Use 8+ characters with letters and numbers.'};
+$('#dologin').onclick=async()=>{authErr('#lerr');const email=$('#lemail').value.trim().toLowerCase(),pw=$('#lpass').value;
+  if(!validEmail(email))return authErr('#lerr','Enter a valid email address.');if(!pw)return authErr('#lerr','Enter your password.');
+  const b=$('#dologin');b.disabled=true;b.textContent='Checking…';
+  try{if(fb){await fbLogin(email,pw,$('#lremember').checked);return}const a=getUsers()[email];if(!a||await hashPw(pw,a.salt)!==a.hash){authErr('#lerr','Incorrect email or password.');return}
+    $('#lpass').value='';startSession(email,$('#lremember').checked)}finally{b.disabled=false;b.textContent='Log in'}};
+$('#dosignup').onclick=async()=>{authErr('#serr');const name=$('#sname').value.trim(),email=$('#semail').value.trim().toLowerCase(),pw=$('#spass').value;
+  if(name.length<2)return authErr('#serr','Enter your full name.');if(!validEmail(email))return authErr('#serr','Enter a valid email address.');
+  if(pw.length<8||!/[A-Za-z]/.test(pw)||!/\d/.test(pw))return authErr('#serr','Password needs 8+ characters with letters and numbers.');
+  if(pw!==$('#spass2').value)return authErr('#serr','Passwords do not match.');
+  const users=getUsers();if(users[email])return authErr('#serr','An account with this email already exists. Try logging in.');
+  const b=$('#dosignup');b.disabled=true;b.textContent='Creating…';
+  try{if(fb){await fbSignup(name,email,pw);return}const salt=rnd(16);users[email]={name,salt,hash:await hashPw(pw,salt),created:Date.now()};saveUsers(users);
+    ['#sname','#semail','#spass','#spass2'].forEach(x=>$(x).value='');startSession(email,true)}finally{b.disabled=false;b.textContent='Create account'}};
+['#lemail','#lpass'].forEach(x=>$(x).addEventListener('keydown',e=>{if(e.key==='Enter')$('#dologin').click()}));
+['#sname','#semail','#spass','#spass2'].forEach(x=>$(x).addEventListener('keydown',e=>{if(e.key==='Enter')$('#dosignup').click()}));
+
+const meter=(n,s)=>'<div style="margin:8px 0"><div class="row" style="justify-content:space-between"><span>'+n+'</span><b>'+s+'%</b></div><div class="meter"><i style="width:'+s+'%;background:'+(s>70?'var(--ok)':s>45?'var(--warn)':'var(--bad)')+'"></i></div></div>';
+
+/* ---------- verify ---------- */
+async function verify(){
+  if(!db){toast('Sign in to claude.ai to use the ledger');return}
+  const idm=$('#vid').value.match(/(CERT-[A-Z0-9-]+)(?:\/([A-Za-z0-9]{12}))?/i),id0=idm?idm[1].toUpperCase():'',code=($('#vcode').value.trim()||(idm&&idm[2])||'').toUpperCase(),file=$('#vfile').files[0],pt=$('#vproof').value.trim();
+  if(!id0&&!file&&!pt){toast('Enter an ID, upload a file or paste a proof');return}
+  const out=$('#vout');out.innerHTML='<h3 style="margin-bottom:12px">Checking…</h3><ul class="steps" id="st"></ul>';
+  const add=t=>$('#st').insertAdjacentHTML('beforeend','<li>'+t+'</li>');
+  try{
+    let proof=null;if(pt){try{proof=JSON.parse(decodeURIComponent(escape(atob(pt))))}catch(e){try{proof=JSON.parse(pt)}catch(e2){add('The pasted proof could not be read')}}}
+    if(file&&!/^image\//.test(file.type)&&!/pdf/i.test(file.type+file.name)){out.innerHTML='<p><b>This file type is not supported.</b> Upload an image (JPG or PNG) or a PDF.</p>';return}
+    let id=id0||(proof&&proof.id)||'',fh=null,cert=null;
+    if(file){fh=await sha(await file.arrayBuffer());add('Document fingerprint <span class="mono">'+fh.slice(0,16)+'…</span>')}
+    if(id){const s=await db.doc('certs/'+id).get();if(s.exists)cert=s.data()}
+    else if(fh){const q=await db.collection('certs').where('fileHash','==',fh).limit(1).get();if(!q.empty){cert=q.docs[0].data();id=cert.id}}
+    add(cert?'Certificate <b>'+esc(cert.id)+'</b> found in block #'+cert.block:'No certificate with that ID or fingerprint is on the ledger');
+    let intact=false;if(cert){intact=await chainOk(cert);add(intact?'Block hash, proof of work and chain link verified':'<b>Ledger check failed</b> for this block')}
+    const match=!!(fh&&cert&&cert.fileHash!=='none'&&fh===cert.fileHash),none=!!(cert&&cert.fileHash==='none');
+    let mix=null;if(cert&&fh&&!match){try{const mq=await db.collection('certs').where('fileHash','==',fh).limit(1).get();if(!mq.empty&&mq.docs[0].data().id!==cert.id)mix=mq.docs[0].data()}catch(e){}}
+    if(match)add('Document is byte-identical to the issued original');else if(mix)add('<b>This file is registered under a different certificate</b> ('+esc(mix.id)+')');else if(fh&&cert&&!none)add('<b>Document differs</b> from the issued original');
+    let fo=null,img=null;
+    if(file&&!match&&!mix){fo={meta:await meta(file),ela:null,ai:null,pdf:null};try{if(/pdf/i.test(file.type+file.name))fo.pdf=await pdfInfo(file)}catch(e){}
+      try{img=await asImage(file)}catch(e){}
+      if(img){try{fo.ela=await ela(img)}catch(e){}add('Pixel and metadata scan finished');
+        if(sample||AI_URL){add('AI is examining the certificate…');try{fo.ai=await aiScan(img)}catch(e){add('AI examination unavailable')}}}
+      else add('The page could not be rendered, so the built-in file scan was used')}
+    let reg=null,cmp=null;if(cert&&cert.enc&&code&&file){reg=await unseal(cert.enc,code,cert.id);add(reg?'Verification code accepted. Registered details unlocked':'<b>Verification code was not accepted</b>');if(reg&&fo&&fo.ai&&fo.ai.extracted){cmp=compareFields(reg,fo.ai.extracted);add('Details printed on the document compared with the registered record')}}
+    let pr=null;if(proof&&cert){pr=await checkProof(proof,cert);add(pr.ok?'Privacy proof matches the ledger':'<b>Privacy proof rejected:</b> '+esc(pr.why))}
+    let auth=null;if(fo&&fo.ai&&fo.ai.looksGenuine!=null)auth=Math.round(+fo.ai.looksGenuine);
+    const ai=fo&&fo.ai,anom=ai?(ai.anomalies||[]):[],aiBad=!!(ai&&(ai.isCertificate===false||ai.verdict==='fake'||(auth!=null&&auth<60)||anom.length>=2)),cmpBad=!!(cmp&&cmp.some(r=>r.st==='bad'));
+    const lj=(fo&&!fo.ai)?localJudge(fo,fo.pdf):null,ljWhy=()=>lj&&lj.reasons.length?esc(lj.reasons.slice(0,2).join('; '))+'.':'';
+    let verdict,cls,why,basis;
+    const OK=(w,b)=>{verdict='Original';cls='p-ok';why=w;basis=b},NO=(w,b)=>{verdict='Fake';cls='p-bad';why=w;basis=b};
+    const aiWhy=()=>anom.length?'the AI found signs of editing: '+esc(anom.slice(0,2).join('; '))+'.':esc((ai&&ai.summary)||'the AI found signs that this is not genuine.');
+    if(cert&&!intact)NO('The ledger record for this certificate does not verify. It may have been tampered with.','Ledger check');
+    else if(cert&&cert.status==='revoked')NO('The issuer has revoked this certificate.','Ledger record');
+    else if(pr&&!pr.ok)NO('The privacy proof does not match the ledger ('+esc(pr.why)+').','Privacy proof check');
+    else if(cert&&match)OK('Issued by '+esc(cert.institution)+' in '+esc(cert.year)+'. Your file is identical to the original on record.','Ledger and exact file match');
+    else if(cert&&cmpBad)NO('The details on this document differ from the registered record: '+cmp.filter(r=>r.st==='bad').map(r=>LBL[r.k]).join(', ')+'.','Ledger and details comparison');
+    else if(cert&&mix)NO('This file is registered under a different certificate ('+esc(mix.id)+'), not the ID you entered.','Ledger and file match');
+    else if(cert&&file){if(aiBad)NO('A certificate with this ID exists, but this file differs from the original and '+aiWhy(),'Ledger and AI examination');else if(ai)OK('Registered by '+esc(cert.institution)+', and no signs of editing were found on this copy.','Ledger and AI examination');else if(lj&&lj.fake)NO('A certificate with this ID exists, but this file differs from the original and '+ljWhy(),'Ledger and built-in scan');else OK('Registered by '+esc(cert.institution)+'. This copy is not identical to the original, but no signs of editing were found.','Ledger and built-in scan')}
+    else if(cert)OK('This certificate is registered by '+esc(cert.institution)+' and is valid. Upload the document itself to check your copy.','Ledger record');
+    else if(file){if(id)NO('The certificate ID on this document is not on the ledger.','Ledger lookup');else if(aiBad)NO('This document looks forged: '+aiWhy(),'AI examination');else if(ai)OK('No signs of editing or forgery were found on this document.','AI examination');else if(lj&&lj.fake)NO('This document shows signs of editing: '+ljWhy(),'Built-in scan');else OK('No signs of editing or forgery were found on this document.','Built-in scan')}
+    else if(id)NO('No certificate with this ID exists on the ledger.','Ledger lookup');
+    else{out.innerHTML='<p><b>The pasted proof could not be read.</b> Copy the whole proof text again, or upload the document instead.</p>';return}
+    if(localMode&&!cert&&id)why+=' (This page keeps its ledger in this browser only.)';
+    const k=cls==='p-ok'?'ok':cls==='p-bad'?'bad':'unk';
+    let h='<div class="vd '+k+'"><span class="vd-ic">'+{ok:'✓',bad:'✕',unk:'?'}[k]+'</span><span class="vd-w">'+verdict+'</span></div><p class="vd-why">'+why+'</p><p class="mono" style="color:var(--mut)">Checked by: '+basis+(cert?' · '+esc(cert.id):'')+'</p>';
+    if(!cert&&file&&!ai)h+='<p class="mono" style="color:var(--mut)">This result comes from the built-in scan only because the AI engine is not connected. Connect it for deeper checks.</p>';
+    if(verdict==='Fake'&&anom.length)h+='<h4 style="margin:14px 0 4px">What looks wrong</h4><ul>'+anom.map(a=>'<li>'+esc(a)+'</li>').join('')+'</ul>';
+    if(cmp)h+='<h4 style="margin:16px 0 4px">Details check (read by AI)</h4><div class="wrap"><table><thead><tr><th>Field</th><th>On this copy</th><th>Registered</th><th></th></tr></thead><tbody>'+cmp.map(r=>'<tr><td>'+LBL[r.k]+'</td><td>'+esc(r.ex)+'</td><td>'+esc(r.reg)+'</td><td>'+(r.st==='ok'?'<span class="pill p-ok">Match</span>':r.st==='near'?'<span class="pill p-warn">Close</span>':r.st==='bad'?'<span class="pill p-bad">Differs</span>':'<span class="pill p-warn">Not read</span>')+'</td></tr>').join('')+'</tbody></table></div>';
+    if(pr&&pr.ok)h+='<h4 style="margin:16px 0 4px">Facts proven by the student</h4><ul>'+pr.shown.map(it=>'<li>'+esc(LBL[it.k]||it.k)+': <b>'+esc(typeof it.v==='boolean'?(it.v?'Yes':'No'):it.v)+'</b></li>').join('')+'</ul><p style="color:var(--mut)">'+(KEYS.length-pr.shown.length)+' other fields stay hidden.</p>';
+    h+='<details style="margin-top:14px"><summary style="cursor:pointer;font-weight:600">How this was checked</summary><div class="mono" style="margin-top:8px;line-height:1.7">'+[['Ledger entry',cert?'found, block #'+cert.block+(intact?' (intact)':' (failed)'):'none'],['Your file fingerprint',fh||'no file'],['Exact match with issued original',match?'yes':'no'],['Editing software in metadata',fo?(fo.meta||'none found'):'n/a'],['AI summary',ai?(ai.summary||''):'n/a'],['Built-in scan',lj?(lj.reasons.join('; ')||'no red flags'):'n/a']].map(r=>esc(r[0])+': '+esc(r[1])).join('<br>')+'</div></details>';
+    h+='<div style="margin-top:14px;padding:12px;border:1px solid var(--line);border-radius:4px"><b>Was this result correct?</b><div class="row" id="stars" style="gap:2px">'+[1,2,3,4,5].map(n=>'<button class="star" data-n="'+n+'" aria-label="'+n+' stars">★</button>').join('')+'</div><span id="fbmsg" style="color:var(--mut);font-size:14px">Your rating helps us catch wrong results.</span></div>';
+    out.innerHTML=h;
+    const plain=t=>t.replace(/<[^>]+>/g,'').replace(/&(amp|lt|gt|quot|#39);/g,(m,e)=>({amp:'&',lt:'<',gt:'>',quot:'"','#39':"'"}[e]));
+    const rec={id:cert?cert.id:(id||(file?file.name:'(file)')),verdict,cls,basis,kind:'verify',ts:Date.now(),inst:cert?cert.institution:'',file:file?file.name:'',fp:fh?fh.slice(0,16):'',reason:plain(why)};let hr=null;bump();
+    try{await db.collection('audits').add(rec)}catch(e){}
+    if(uid)try{hr=await db.collection('data/users/'+uid+'/history').add(rec)}catch(e){}
+    $$('#stars .star').forEach(b=>b.onclick=async()=>{const n=+b.dataset.n;$$('#stars .star').forEach(x=>{x.classList.toggle('on',+x.dataset.n<=n);x.disabled=true});
+      try{await db.collection('feedback').add({inst:cert?cert.institution:'unknown',certId:rec.id,rating:n,by:uid,ts:Date.now()});if(hr)await hr.update({fb:n});$('#fbmsg').textContent='Thanks, your rating was recorded.'}catch(e){$('#fbmsg').textContent='Could not save the rating. You may have view-only access.'}});
+  }catch(e){out.innerHTML='<p><b>Verification failed.</b> '+esc(e.message||e.code||e)+'</p>'}}
+
+$('#vreset').onclick=()=>{$('#vid').value='';$('#vcode').value='';$('#vproof').value='';$('#vfile').value='';$('#fname').textContent='Checking starts as soon as you choose the file.';$('#vout').innerHTML='<p style="color:var(--mut)">The result appears here.</p>'};
+let vBusy=false;
+async function runVerify(){if(vBusy)return;vBusy=true;try{await verify()}finally{vBusy=false}}
+$('#vgo').onclick=runVerify;
+async function qrFromImage(file){if(typeof jsQR==='undefined'||!file.type.startsWith('image/'))return null;
+  try{const bmp=await createImageBitmap(file);
+    for(const maxW of [bmp.width,1600,1000,600]){const sc=Math.min(1,maxW/bmp.width),w=Math.max(1,Math.round(bmp.width*sc)),h=Math.max(1,Math.round(bmp.height*sc));
+      const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d',{willReadFrequently:true});x.drawImage(bmp,0,0,w,h);
+      const r=jsQR(x.getImageData(0,0,w,h).data,w,h,{inversionAttempts:'attemptBoth'}),m=r&&r.data.match(/(CERT-[A-Z0-9-]+)(?:\/([A-Za-z0-9]{12}))?/i);
+      if(m)return{id:m[1].toUpperCase(),code:m[2]?m[2].toUpperCase():''}}}catch(e){}return null}
+$('#vfile').onchange=async e=>{const f=e.target.files[0];$('#fname').textContent=f?f.name:'';if(!f)return;
+  if(!$('#vid').value.trim()){const im=await asImage(f).catch(()=>null),q=im?await qrFromImage(im):null;if(q){$('#vid').value=q.id;if(q.code&&!$('#vcode').value.trim())$('#vcode').value=q.code;toast('QR found on the document')}}
+  runVerify()};
+$('#vproof').addEventListener('paste',()=>setTimeout(()=>{if($('#vproof').value.trim())runVerify()},150));
+$('#vscan').onclick=async()=>{const v=$('#cam');if(typeof jsQR==='undefined'||!navigator.mediaDevices){toast('Camera scanning is not available here. Type the ID instead.');return}
+  try{const st=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});v.srcObject=st;v.style.display='block';await v.play();const c=document.createElement('canvas'),x=c.getContext('2d',{willReadFrequently:true});
+    const tick=()=>{if(!v.srcObject)return;if(v.videoWidth){c.width=v.videoWidth;c.height=v.videoHeight;x.drawImage(v,0,0);const r=jsQR(x.getImageData(0,0,c.width,c.height).data,c.width,c.height),m=r&&r.data.match(/(CERT-[A-Z0-9-]+)(?:\/([A-Za-z0-9]{12}))?/i);
+      if(m){$('#vid').value=m[1].toUpperCase();if(m[2])$('#vcode').value=m[2].toUpperCase();st.getTracks().forEach(t=>t.stop());v.srcObject=null;v.style.display='none';runVerify();return}}requestAnimationFrame(tick)};tick()}
+  catch(e){toast('Could not open the camera. Type the ID instead.')}};
+
+/* ---------- student wallet ---------- */
+let cur=null;
+$('#cimp').onclick=async()=>{const f=$('#cfile').files[0];if(!db||!uid){toast('Sign in to use the wallet');return}if(!f){toast('Choose a credential file');return}
+  try{const c=JSON.parse(await f.text()),L=await tree(await Promise.all(KEYS.map(k=>leafH(k,c.vals[k],c.salts[k]))));if(L.at(-1)[0]!==c.root)throw new Error('This credential file has been altered.');
+    const s=await db.doc('certs/'+c.id).get();if(!s.exists||s.data().root!==c.root)throw new Error('This credential is not on the ledger.');
+    await db.doc('data/users/'+uid+'/wallet/'+c.id).set(c);toast('Credential imported');renderStudent()}catch(e){toast(e.message||'Could not import that file')}};
+async function renderStudent(){const box=$('#slist');if(!db||!uid){box.innerHTML='<div class="card">Sign in to claude.ai to use your wallet.</div>';return}
+  const q=await db.collection('data/users/'+uid+'/wallet').get();box.innerHTML=q.empty?'<div class="card" style="color:var(--mut)">No credentials yet. Import the file from your institution above.</div>':'';
+  for(const d of q.docs){const c=d.data(),s=await db.doc('certs/'+c.id).get(),st=s.exists?s.data().status:'missing',el=document.createElement('div');el.className='card';
+    el.innerHTML='<div class="row" style="justify-content:space-between;align-items:flex-start"><div><h3>'+esc(c.vals.course)+'</h3><div style="color:var(--mut)">'+esc(c.vals.institution)+' · '+esc(c.vals.year)+'</div><div>'+esc(c.vals.name)+' · '+esc(c.vals.grade)+'%</div><div class="mono" style="margin:8px 0">'+esc(c.id)+'<br>Code '+esc(c.code||'n/a')+'<br>Block #'+c.block+'</div><span class="pill '+(st==='valid'?'p-ok':'p-bad')+'">'+(st==='valid'?'Valid on ledger':st)+'</span></div><div class="qr"></div></div><div class="row" style="margin-top:12px"><button class="btn sm">Verify now</button><button class="btn ghost sm">Share proof</button><button class="btn ghost sm">Copy link</button></div>';
+    qr(el.querySelector('.qr'),SITE+'#v/'+c.id+(c.code?'/'+c.code:''));const [a,b,k]=el.querySelectorAll('button');
+    a.onclick=()=>{show('verify');$('#vid').value=c.id;$('#vcode').value=c.code||'';verify()};b.onclick=()=>openBuilder(c);k.onclick=()=>{try{navigator.clipboard.writeText(SITE+'#v/'+c.id+(c.code?'/'+c.code:''))}catch(e){}toast('Link copied')};box.appendChild(el)}}
+function openBuilder(c){cur=c;$('#pbuild').style.display='block';$('#pout').innerHTML='';
+  $('#pfields').innerHTML=KEYS.filter(k=>k!=='fileHash').map(k=>'<div class="chk"><input type="checkbox" id="pf-'+k+'" '+(['degreeCompleted','gradeAbove60','accredited'].includes(k)?'checked':'')+'><label for="pf-'+k+'" style="margin:0">'+LBL[k]+'</label></div>').join('');$('#pbuild').scrollIntoView({behavior:'smooth'})}
+$('#pgo').onclick=async()=>{const c=cur,pick=KEYS.filter(k=>$('#pf-'+k)&&$('#pf-'+k).checked);if(!pick.length){toast('Tick at least one field');return}
+  const L=await tree(await Promise.all(KEYS.map(k=>leafH(k,c.vals[k],c.salts[k]))));
+  const p={t:'CCAI-PROOF',id:c.id,root:c.root,items:pick.map(k=>{const i=KEYS.indexOf(k);return{k,v:c.vals[k],salt:c.salts[k],i,path:pathOf(L,i)}})};
+  const s=btoa(unescape(encodeURIComponent(JSON.stringify(p))));
+  $('#pout').innerHTML='<div class="row">'+pick.map(k=>'<span class="pill p-ok">✓ '+LBL[k]+'</span>').join('')+'</div><p style="color:var(--mut)">Hidden from the verifier: '+(KEYS.length-pick.length)+' fields, including everything you did not tick.</p><textarea rows="3" readonly id="ptxt"></textarea><div class="row" style="margin-top:8px"><button class="btn sm" id="pcopy">Copy proof</button><button class="btn ghost sm" id="pdl">Download</button></div>';
+  $('#ptxt').value=s;$('#pcopy').onclick=()=>{try{navigator.clipboard.writeText(s)}catch(e){$('#ptxt').select()}toast('Proof copied')};
+  $('#pdl').onclick=()=>dl?dl.save({filename:c.id+'.proof.txt',data:s}).catch(()=>{}):toast('Downloads are unavailable here')};
+
+/* ---------- admin ---------- */
+$('#igo').onclick=async()=>{if(!db||!isAdmin){toast('Only editors can issue certificates');return}
+  const name=$('#in').value.trim(),course=$('#ic').value.trim(),g=+$('#ig').value,year=+$('#iy').value,inst=$('#ii').value.trim(),f=$('#ifile').files[0],msg=$('#imsg');
+  if(!name||!course||!inst||!(g>=0&&g<=100)||!$('#ig').value){toast('Fill in name, course, grade and institution');return}
+  $('#igo').disabled=true;try{
+    msg.textContent='Fingerprinting the document…';const fh=f?await sha(await f.arrayBuffer()):'none',id='CERT-'+year+'-'+rnd(3).toUpperCase();
+    const code=rnd(6).toUpperCase(),enc=await seal({name,course,grade:g,year,institution:inst},code,id);
+    const vals={name,course,grade:g,year,institution:inst,degreeCompleted:true,gradeAbove60:g>=60,accredited:true,fileHash:fh},salts={};KEYS.forEach(k=>salts[k]=rnd(8));
+    const L=await tree(await Promise.all(KEYS.map(k=>leafH(k,vals[k],salts[k])))),root=L.at(-1)[0];
+    msg.textContent='Mining block (proof of work)…';const blk=await addBlock({certId:id,root,fileHash:fh});
+    await db.doc('certs/'+id).set({id,root,fileHash:fh,block:blk.i,institution:inst,year,status:'valid',issuedAt:Date.now(),by:uid,enc});
+    const cred={v:1,id,vals,salts,root,block:blk.i,code};await db.doc('data/users/'+uid+'/issued/'+id).set({id,name,course,cred});
+    try{await db.collection('data/users/'+uid+'/history').add({kind:'issue',id,verdict:'Issued',cls:'p-info',inst,name,basis:'Ledger',reason:'Issued to '+name+' ('+course+', '+inst+')',ts:Date.now()})}catch(e){}bump();
+    msg.textContent=id+' anchored in block #'+blk.i+' (hash '+blk.hash.slice(0,12)+'…). Verification code: '+code+'. Give the credential file to the student.'+(f?'':' No document was attached, so verifiers can confirm the record but not a document.');
+    ['#in','#ic','#ig'].forEach(s=>$(s).value='');$('#ifile').value='';if(dl)dl.save({filename:id+'.credential.json',data:JSON.stringify(cred,null,1)}).catch(()=>{})
+  }catch(e){msg.textContent='Could not issue: '+(e.message||e.code||e)}$('#igo').disabled=false};
+function setWho(){const nm=myName||'Guest';$('#pname').textContent=nm;$('#pname2').textContent=nm;if(avatar){$('#avatar').src=avatar;$('#avatar2').src=avatar}const r=$('#prole');r.textContent=isAdmin?'Editor':(uid?'Verifier and student':'Not signed in');r.className='pill '+(isAdmin?'p-ok':'p-warn');const ai=$('#acctid');if(fb&&fbUser){ai.textContent='Account ID: '+fbUser.uid;ai.style.display='block'}else ai.style.display='none'}
+const statCards=a=>a.map(s=>'<div class="card stat"><b>'+s[0]+'</b><span>'+s[1]+'</span></div>').join('');
+async function renderDash(){bkInfo();$('#greet').textContent='Welcome back'+(myName?', '+myName.split(' ')[0]:'');$('#issueBtn').disabled=!isAdmin;$('#issueNote').textContent=isAdmin?'':'Editors only';
+  if(!db){$('#dstats').innerHTML='';return}
+  let H=[];if(uid){try{const q=await db.collection('data/users/'+uid+'/history').get();H=q.docs.map(d=>d.data())}catch(e){}}
+  const V=H.filter(h=>h.kind!=='issue'),st=[[V.length,'Your verifications'],[V.filter(h=>h.cls==='p-ok').length,'Verified as original'],[V.filter(h=>h.cls==='p-bad').length,'Flagged as fake']];
+  if(isAdmin){try{const ce=await db.collection('certs').get();st.push([ce.size,'Certificates on ledger'])}catch(e){}}
+  $('#dstats').innerHTML=statCards(st)}
+function renderIssue(){const ok=!!(db&&isAdmin);$('#issuelock').style.display=ok?'none':'block';$('#issuebody').style.display=ok?'grid':'none'}
+async function renderIssued(){const ok=!!(db&&isAdmin);$('#adminIssued').style.display=ok?'block':'none';
+  $('#issuedSub').textContent=ok?'Certificates you issued, the ledger they sit on, and your own wallet.':'Certificates issued to you. Import the credential file your institution gave you.';
+  if(ok){const [ce,ch,is]=await Promise.all([db.collection('certs').get(),db.collection('chain').get(),db.collection('data/users/'+uid+'/issued').get()]);
+    const stm={};ce.docs.forEach(d=>stm[d.id]=d.data().status);
+    $('#astats').innerHTML=statCards([[ce.size,'Certificates anchored'],[ch.size,'Blocks on chain'],[is.size,'Issued by you'],[Object.values(stm).filter(x=>x==='revoked').length,'Revoked']]);
+    $('#issued').innerHTML=is.docs.map(d=>{const r=d.data();return'<tr><td class="mono">'+esc(r.id)+'</td><td>'+esc(r.name)+'</td><td>'+esc(r.course)+'</td><td><span class="pill '+(stm[r.id]==='valid'?'p-ok':'p-bad')+'">'+esc(stm[r.id]||'?')+'</span></td><td><button class="btn ghost sm" data-act="dl" data-id="'+esc(r.id)+'">Credential</button> '+(stm[r.id]==='valid'?'<button class="btn ghost sm" data-act="rv" data-id="'+esc(r.id)+'">Revoke</button>':'')+'</td></tr>'}).join('')||'<tr><td colspan="5" style="color:var(--mut)">Nothing issued yet. Use Issue certificate on the dashboard.</td></tr>';
+    $('#ledger').innerHTML=ch.docs.slice(-15).reverse().map(d=>{const b=d.data();return'<tr><td>'+b.i+'</td><td class="mono">'+b.hash.slice(0,14)+'…</td><td class="mono">'+b.prev.slice(0,10)+'…</td><td>'+b.nonce+'</td><td class="mono">'+esc(b.data.certId||'genesis')+'</td></tr>'}).join('')}
+  renderStudent()}
+async function renderDetected(){const box=$('#alerts');$('#adminDet').style.display=isAdmin&&db?'grid':'none';
+  $('#detSub').textContent=isAdmin?'Certificates flagged as altered, forged or revoked across every verification on this site.':'Certificates you checked that were flagged as altered, forged or revoked.';
+  if(!db){box.innerHTML='<p style="color:var(--mut);margin:0">Sign in to claude.ai to see detections.</p>';return}
+  let A=[];try{const q=isAdmin?await db.collection('audits').get():(uid?await db.collection('data/users/'+uid+'/history').get():null);A=q?q.docs.map(d=>d.data()):[]}catch(e){}
+  const bad=A.filter(a=>a.cls==='p-bad').sort((a,b)=>b.ts-a.ts);
+  box.innerHTML=bad.length?'<table><thead><tr><th>Time</th><th>Certificate</th><th>Result</th></tr></thead><tbody>'+bad.slice(0,50).map(a=>'<tr><td>'+ago(a.ts)+'</td><td class="mono">'+esc(a.id)+'</td><td><span class="pill p-bad">'+esc(a.verdict)+'</span></td></tr>').join('')+'</tbody></table>':'<p style="color:var(--mut);margin:0">No flagged certificates yet. Anything detected as altered, forged or revoked will appear here.</p>';
+  if(isAdmin){const days=[...Array(7)].map((_,i)=>{const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-6+i);return d}),cnt=days.map(d=>A.filter(a=>a.ts>=+d&&a.ts<+d+864e5).length),mx=Math.max(1,...cnt);
+    $('#chart').innerHTML=days.map((d,i)=>'<div style="height:'+Math.max(3,cnt[i]/mx*100)+'%" title="'+cnt[i]+'"><span>'+d.toLocaleDateString(undefined,{weekday:'short'})+'</span></div>').join('');
+    let F=[];try{const fq=await db.collection('feedback').get();F=fq.docs.map(d=>d.data().rating)}catch(e){}const avg=F.length?F.reduce((a,b)=>a+b)/F.length:0;
+    $('#fbbox').innerHTML=F.length?'<div class="stat"><b>'+Math.round(avg/5*100)+'/100</b><span>'+avg.toFixed(1)+' ★ from '+F.length+' ratings</span></div>'+[5,4,3,2,1].map(n=>{const c=F.filter(x=>x===n).length;return'<div class="row" style="flex-wrap:nowrap"><span style="width:28px">'+n+'★</span><div class="meter" style="flex:1"><i style="width:'+Math.round(c/F.length*100)+'%;background:var(--acc)"></i></div><span style="width:28px;text-align:right">'+c+'</span></div>'}).join(''):'<p style="color:var(--mut)">No ratings yet. They appear after verifiers rate a result.</p>'}}
+$('#issued').onclick=async e=>{const b=e.target.closest('button');if(!b)return;const id=b.dataset.id;
+  if(b.dataset.act==='rv'){if(!confirm('Revoke '+id+'? Verifiers will see it as revoked.'))return;await db.doc('certs/'+id).update({status:'revoked'});renderIssued()}
+  else{const s=await db.doc('data/users/'+uid+'/issued/'+id).get();if(s.exists&&dl)dl.save({filename:id+'.credential.json',data:JSON.stringify(s.data().cred,null,1)}).catch(()=>{})}};
+$('#vchain').onclick=async()=>{const m=$('#chainmsg');m.textContent='Validating…';const q=await db.collection('chain').orderBy('i','asc').get();let prev=ZERO;
+  for(const d of q.docs){const b=d.data();if(b.prev!==prev||b.hash!==await bHash(b)||!b.hash.startsWith(DIFF)){m.innerHTML='<span class="pill p-bad">Broken at block #'+b.i+'</span>';return}prev=b.hash}
+  m.innerHTML='<span class="pill p-ok">Chain valid</span> '+q.size+' blocks checked: every hash, link and proof of work recomputed.'};
+
+/* ---------- history ---------- */
+async function renderHist(){let rows=[];if(db&&uid){const q=await db.collection('data/users/'+uid+'/history').orderBy('ts','desc').limit(200).get();rows=q.docs.map(d=>d.data())}
+  const f=$('#hfilter').value;rows=rows.filter(h=>f==='all'||(f==='issue'?h.kind==='issue':f==='ok'?(h.cls==='p-ok'&&h.kind!=='issue'):h.cls==='p-bad'));
+  $('#hbody').innerHTML=rows.map(h=>'<tr><td>'+ago(h.ts)+'</td><td>'+(h.kind==='issue'?'Issued':'Checked')+'</td><td class="mono">'+esc(h.id)+(h.file&&h.file!==h.id?'<br>'+esc(h.file):'')+'</td><td><span class="pill '+esc(h.cls)+'">'+esc(h.verdict)+'</span></td><td style="min-width:220px">'+esc(h.reason||h.basis||'')+'</td><td>'+(h.fb?'★'.repeat(h.fb):'—')+'</td></tr>').join('');$('#hempty').style.display=rows.length?'none':'block';bkInfo()}
+$('#hfilter').onchange=renderHist;
+$('#hcsv').onclick=async()=>{if(!db||!uid){toast('Log in first');return}try{const q=await db.collection('data/users/'+uid+'/history').orderBy('ts','desc').get();
+  const c=v=>{let t=String(v==null?'':v);if(/^[=+\-@\t\r]/.test(t))t="'"+t;return'"'+t.replace(/"/g,'""')+'"'};
+  const lines=[['Time','Type','Certificate','File','Result','Why','Checked by','Rating'].map(c).join(',')].concat(q.docs.map(d=>d.data()).map(h=>[new Date(h.ts).toISOString(),h.kind==='issue'?'Issued':'Checked',h.id,h.file||'',h.verdict,h.reason||'',h.basis||'',h.fb||''].map(c).join(',')));
+  await dl.save({filename:'certichain-history-'+new Date().toISOString().slice(0,10)+'.csv',data:'\ufeff'+lines.join('\r\n')});toast('History exported')}catch(e){toast('Could not export the history')}};
+$('#hclear').onclick=async()=>{if(!db||!uid)return;if(!confirm('Clear all history? Download a backup first if you may need it later.'))return;const q=await db.collection('data/users/'+uid+'/history').get();await Promise.all(q.docs.map(d=>db.doc('data/users/'+uid+'/history/'+d.id).delete()));renderHist()};
+async function doBackup(){if(!db||!uid){toast('Log in first');return}try{const B=await makeBackup();await dl.save({filename:'certichain-backup-'+new Date().toISOString().slice(0,10)+'.json',data:JSON.stringify(B)});store.set('cc_lastbk',String(Date.now()));store.set('cc_unsaved','0');bkInfo();toast('Backup downloaded')}catch(e){toast('Could not create the backup')}}
+$('#bkdl').onclick=$('#bkdl2').onclick=doBackup;
+$('#bkrestore').onclick=async()=>{const f=$('#bkfile').files[0];if(!db||!uid){toast('Log in first');return}if(!f){toast('Choose a backup file');return}
+  try{const n=await restoreBackup(JSON.parse(await f.text()));toast('Restored '+n+' records');$('#bkfile').value='';renderHist()}catch(e){toast(e.message||'Could not restore that file')}};
+
+/* ---------- start ---------- */
+(async()=>{
+  [db,sample,dl,user]=await Promise.all(['db','sample','downloads','user'].map(use));
+  if(await initFirebase()){db=fb.db;localMode=false;user=null}else if(!db){localMode=true;db=makeLocalDB()}
+  if(!dl)dl=makeLocalDownloads();
+  if(user){try{const me=await user.me();uid=me.id;isAdmin=!!me.canEdit;myName=me.name||'';avatar=me.avatarUrl||''}catch(e){}}
+  if(fb)await applyFbIdentity();applyLocalIdentity();{const a=currentAcct();if(a)myName=myName||a.name}
+  setWho();
+  $('#banner').style.display=db?'none':'block';
+  $('#aistat').innerHTML=(sample||AI_URL)?'<span class="pill p-ok">AI engine connected</span> Documents not on the ledger are examined by AI.':'<span class="pill p-warn">AI engine not connected</span> Documents not on the ledger get the built-in scan only.';
+    show(currentAcct()?'dashboard':'login');
+  pendingV=(location.hash+' '+document.referrer).match(/(CERT-[A-Z0-9-]{4,})(?:\/([A-Za-z0-9]{12}))?/i);runPending();
+})();
+</script>
+</body>
+</html>

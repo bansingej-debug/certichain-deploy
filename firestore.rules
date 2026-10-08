@@ -1,0 +1,54 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function isAdmin() {
+      return signedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    // Admins are added by hand in the Firebase console. Nobody can write here from the website.
+    match /admins/{uid} {
+      allow read: if signedIn() && request.auth.uid == uid;
+      allow write: if false;
+    }
+
+    // Registered certificates: any signed-in user can verify, only admins can add.
+    // The only change allowed afterwards is revoking (the status field).
+    match /certs/{id} {
+      allow read: if signedIn();
+      allow create: if isAdmin();
+      allow update: if isAdmin() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status']);
+      allow delete: if false;
+    }
+
+    // The ledger: blocks can be added by admins and never changed or deleted.
+    match /chain/{id} {
+      allow read: if signedIn();
+      allow create: if isAdmin();
+      allow update, delete: if false;
+    }
+
+    // Log of every verification, readable by admins only.
+    match /audits/{id} {
+      allow create: if signedIn();
+      allow read: if isAdmin();
+      allow update, delete: if false;
+    }
+
+    // Star ratings from verifiers.
+    match /feedback/{id} {
+      allow create: if signedIn()
+        && request.resource.data.by == request.auth.uid
+        && request.resource.data.rating is int
+        && request.resource.data.rating >= 1 && request.resource.data.rating <= 5;
+      allow read: if isAdmin();
+      allow update, delete: if false;
+    }
+
+    // Each person's own history, wallet and issued list. Private to them.
+    match /users/{uid}/{document=**} {
+      allow read, write: if signedIn() && request.auth.uid == uid;
+    }
+  }
+}
